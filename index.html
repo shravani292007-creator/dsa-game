@@ -2,243 +2,906 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escape the Dungeon — DSA Game</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Mall Rush - DSA Game</title>
+
 <style>
-:root{--bg:#0f172a;--card:#172033;--card2:#1e293b;--text:#f8fafc;--muted:#a8b3c7;--accent:#8b5cf6;--border:#334155}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0f172a,#1e1b4b);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);padding:20px}
-#game{max-width:900px;margin:auto}.hero{text-align:center;padding:10px 0 20px}h1{font-size:32px;margin:0 0 6px}.muted{color:var(--muted);font-size:14px}
-.panel{background:rgba(23,32,51,.94);border:1px solid var(--border);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 12px 35px rgba(0,0,0,.2)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.stat{background:var(--card2);border-radius:12px;padding:12px;text-align:center}.stat b{display:block;font-size:23px;margin-top:3px}
-.room{border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;background:#111827;min-height:180px;display:flex;flex-direction:column;justify-content:center;gap:8px}.scene{font-size:58px}
-.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}button{border:1px solid var(--border);background:var(--card2);color:var(--text);border-radius:11px;padding:11px 14px;font-weight:700;cursor:pointer;min-height:44px}button:hover{background:#312e81}button.primary{background:var(--accent);border-color:var(--accent)}
-.log{font-size:13px;color:var(--muted);margin-top:9px;min-height:20px}.lists{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.box{border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--card2);min-width:0}.box h3{font-size:14px;margin:0 0 7px}.nodes{font-size:13px;line-height:1.6;overflow-wrap:anywhere}
-.explain h2{font-size:20px;margin:0 0 10px}.explain h3{font-size:15px;margin:16px 0 6px}.pill{display:inline-block;border:1px solid #475569;border-radius:999px;padding:3px 8px;font-size:12px;margin:2px;color:#ddd}.win{font-weight:800;font-size:20px}
-@media(max-width:600px){body{padding:12px}h1{font-size:27px}.lists{grid-template-columns:1fr}.stats{gap:6px}.stat{padding:9px 4px}}
+*{box-sizing:border-box}
+body{
+ margin:0;background:#191326;color:white;font-family:Arial,sans-serif;
+ overflow:hidden
+}
+button{font-family:Arial;border:0;cursor:pointer}
+
+#game{
+ width:100vw;height:100vh;max-width:900px;margin:auto;
+ position:relative;overflow:hidden;background:#ead9e5
+}
+
+.screen{
+ position:absolute;inset:0;z-index:50;
+ display:flex;align-items:center;justify-content:center;
+ background:linear-gradient(135deg,#25152f,#8c407b)
+}
+
+.card{
+ width:90%;max-width:550px;background:white;color:#2c2030;
+ border-radius:25px;padding:28px;text-align:center;
+ box-shadow:0 15px 50px #0008
+}
+
+.card h1{color:#8c407b;font-size:38px;margin:5px}
+.card p{line-height:1.5}
+
+.start,.restart{
+ background:#8c407b;color:white;padding:14px 25px;
+ border-radius:13px;font-weight:bold;font-size:16px
+}
+
+#hud{
+ position:absolute;top:0;left:0;right:0;z-index:20;
+ background:#29182f;padding:8px;display:flex;
+ justify-content:space-around;gap:5px
+}
+
+.stat{
+ background:#452740;border-radius:10px;
+ padding:6px 9px;text-align:center;font-size:11px
+}
+.stat b{display:block;font-size:17px}
+
+#world{
+ position:absolute;top:48px;bottom:0;left:0;right:0;
+ background:#eee0e8
+}
+
+.shop{
+ position:absolute;border:3px solid #65435e;
+ border-radius:18px;display:flex;
+ flex-direction:column;align-items:center;justify-content:center;
+ color:#493046;font-weight:bold;
+ box-shadow:0 4px 10px #0002
+}
+.shop span{font-size:30px}
+.fashion{left:4%;top:7%;width:29%;height:25%;background:#f5b9d7}
+.beauty{right:4%;top:7%;width:29%;height:25%;background:#c9c0ff}
+.food{left:4%;bottom:8%;width:29%;height:25%;background:#bde7d2}
+.tech{right:4%;bottom:8%;width:29%;height:25%;background:#ffd19e}
+.checkout{left:38%;top:38%;width:24%;height:22%;background:#fff09b}
+
+#player{
+ position:absolute;width:42px;height:42px;
+ border-radius:50%;background:#7c3aed;
+ border:4px solid white;z-index:10;
+ display:flex;align-items:center;justify-content:center;
+ font-size:22px;box-shadow:0 3px 8px #0007
+}
+
+.item{
+ position:absolute;width:34px;height:34px;
+ background:white;border:2px solid #5d3d56;
+ border-radius:9px;display:flex;
+ align-items:center;justify-content:center;
+ font-size:21px;z-index:8;
+ box-shadow:0 3px 7px #0005
+}
+
+#dsa{
+ position:absolute;right:8px;top:57px;z-index:18;
+ width:190px;background:#ffffffeF;color:#332338;
+ border-radius:12px;padding:9px;font-size:10px;
+ box-shadow:0 3px 10px #0003
+}
+#dsa strong{color:#8c407b;font-size:13px}
+
+#joystick{
+ position:absolute;left:18px;bottom:18px;
+ width:115px;height:115px;border-radius:50%;
+ background:#ffffff66;border:3px solid #fff9;z-index:25
+}
+#stick{
+ position:absolute;width:48px;height:48px;
+ left:31px;top:31px;border-radius:50%;
+ background:#8c407b;border:3px solid white
+}
+
+#pick{
+ position:absolute;right:25px;bottom:35px;
+ width:85px;height:85px;border-radius:50%;
+ background:#8c407b;color:white;
+ border:4px solid white;font-weight:bold;
+ z-index:25
+}
+
+#msg{
+ position:absolute;left:50%;top:55%;
+ transform:translate(-50%,-50%);
+ background:#24172bdd;padding:12px 18px;
+ border-radius:12px;z-index:40;
+ display:none;text-align:center
+}
+
+@media(max-width:600px){
+ #dsa{width:150px;font-size:9px}
+ .card h1{font-size:32px}
+}
 </style>
 </head>
+
 <body>
+
 <div id="game">
-<div class="hero">
-<h1>🏰 Escape the Dungeon</h1>
-<div class="muted">A DSA Mini-Game using Stack, Queue & Linked List</div>
+
+<!-- START SCREEN -->
+<div id="start" class="screen">
+ <div class="card">
+  <h1>🛍️ MALL RUSH</h1>
+  <h3>Complete your shopping before the mall closes!</h3>
+
+  <p>⏱️ You have <b>2 minutes</b></p>
+
+  <p>
+  👗 Find all 5 shopping items<br>
+  💰 Stay within your ₹500 budget<br>
+  🛒 Reach the checkout
+  </p>
+
+  <p>
+  <b>DSA USED:</b><br>
+  ↩️ Stack = shopping history<br>
+  👥 Queue = checkout customers<br>
+  🔗 Linked List = shopping bag
+  </p>
+
+  <p style="font-size:12px">
+  Move using the joystick. Tap PICK ITEM near an item.
+  Press <b>UNDO</b> to remove your latest shopping action.
+  </p>
+
+  <button class="start" onclick="startGame()">START SHOPPING 🛒</button>
+ </div>
 </div>
 
-<div class="panel">
-<div class="stats">
-<div class="stat">❤️ Lives<b id="lives">3</b></div>
-<div class="stat">⭐ Score<b id="score">0</b></div>
-<div class="stat">🚪 Rooms<b id="rooms">0/5</b></div>
+
+<!-- GAME OVER / WIN -->
+<div id="end" class="screen" style="display:none">
+ <div class="card">
+  <h1 id="endTitle"></h1>
+  <p id="endText"></p>
+  <p id="endDSA"></p>
+  <button class="restart" onclick="startGame()">SHOP AGAIN 🔄</button>
+ </div>
 </div>
 
-<div class="room">
-<div class="scene" id="scene">🗝️</div>
-<strong id="message">Find the key and escape the dungeon!</strong>
-<div class="muted" id="submessage">Explore the room, collect items, and defeat enemies.</div>
+
+<!-- HUD -->
+<div id="hud">
+ <div class="stat">⏱️<b id="time">2:00</b>TIME</div>
+ <div class="stat">⭐<b id="score">0</b>SCORE</div>
+ <div class="stat">🛍️<b id="count">0/5</b>BAG</div>
+ <div class="stat">💰<b id="money">₹500</b>BUDGET</div>
 </div>
 
-<div class="actions">
-<button class="primary" id="explore">🔎 Explore</button>
-<button id="collect">🎒 Collect Item</button>
-<button id="attack">⚔️ Attack Enemy</button>
-<button id="undo">↩️ Undo Last Action</button>
-<button id="next">➡️ Next Room</button>
-<button id="reset">🔄 Restart</button>
-</div>
-<div class="log" id="log">Game ready.</div>
+
+<!-- MALL -->
+<div id="world">
+
+ <div class="shop fashion">
+  <span>👗</span>FASHION
+ </div>
+
+ <div class="shop beauty">
+  <span>💄</span>BEAUTY
+ </div>
+
+ <div class="shop food">
+  <span>🍫</span>FOOD COURT
+ </div>
+
+ <div class="shop tech">
+  <span>🎧</span>TECH
+ </div>
+
+ <div class="shop checkout">
+  <span>🛒</span>CHECKOUT
+ </div>
+
+ <div id="player">🧍‍♀️</div>
+
 </div>
 
-<div class="panel">
-<strong>🧠 Live DSA Structures</strong>
-<div class="lists">
-<div class="box"><h3>📚 Stack (LIFO)</h3><div class="nodes" id="stackView">Empty</div></div>
-<div class="box"><h3>👾 Queue (FIFO)</h3><div class="nodes" id="queueView">Empty</div></div>
-<div class="box"><h3>🎒 Linked List</h3><div class="nodes" id="listView">NULL</div></div>
-</div>
+
+<!-- DSA PANEL -->
+<div id="dsa">
+ <strong>🧠 DSA STATUS</strong><br><br>
+
+ <b>STACK</b><br>
+ <span id="stack">[]</span><br><br>
+
+ <b>QUEUE</b><br>
+ <span id="queue">[A,B,C]</span><br><br>
+
+ <b>LINKED LIST</b><br>
+ <span id="list">NULL</span>
 </div>
 
-<div class="panel explain">
-<h2>📖 How DSA is Used in This Game</h2>
 
-<h3>📚 1. Stack — LIFO (Last In, First Out)</h3>
-<p class="muted">The Stack stores the player's actions. Whenever an action is performed, it is <b>pushed</b> onto the stack. When <b>Undo</b> is selected, the most recent action is <b>popped</b> first. This demonstrates LIFO.</p>
-<span class="pill">push()</span><span class="pill">pop()</span><span class="pill">Top = latest action</span>
+<div id="msg"></div>
 
-<h3>👾 2. Queue — FIFO (First In, First Out)</h3>
-<p class="muted">Enemies are placed into a Queue as they appear. The enemy at the <b>front</b> is attacked first and removed using <b>dequeue</b>. New enemies are added at the <b>rear</b>. This demonstrates FIFO.</p>
-<span class="pill">enqueue()</span><span class="pill">dequeue()</span><span class="pill">Front → first enemy</span>
-
-<h3>🎒 3. Linked List</h3>
-<p class="muted">Collected items are stored as nodes in a Linked List. Each node contains an item and a link to the next node. Items can be added dynamically without requiring a fixed-size array.</p>
-<span class="pill">Node</span><span class="pill">next pointer</span><span class="pill">NULL = end</span>
+<div id="joystick">
+ <div id="stick"></div>
 </div>
+
+<button id="pick" onclick="collect()">PICK<br>ITEM</button>
+
 </div>
+
 
 <script>
+
+/* =========================
+   STACK
+   LIFO = Last In First Out
+========================= */
+
 class Stack{
- constructor(){this.a=[]}
- push(x){this.a.push(x)}
- pop(){return this.a.pop()}
+ constructor(){
+  this.data=[];
+ }
+
+ push(item){
+  this.data.push(item);
+ }
+
+ pop(){
+  return this.data.pop();
+ }
+
+ peek(){
+  return this.data[this.data.length-1];
+ }
 }
+
+
+/* =========================
+   QUEUE
+   FIFO = First In First Out
+========================= */
+
 class Queue{
- constructor(){this.a=[]}
- enqueue(x){this.a.push(x)}
- dequeue(){return this.a.shift()}
+ constructor(items=[]){
+  this.data=[...items];
+ }
+
+ enqueue(item){
+  this.data.push(item);
+ }
+
+ dequeue(){
+  return this.data.shift();
+ }
+
+ front(){
+  return this.data[0];
+ }
 }
+
+
+/* =========================
+   LINKED LIST
+========================= */
+
 class Node{
- constructor(v){this.value=v;this.next=null}
+ constructor(value){
+  this.value=value;
+  this.next=null;
+ }
 }
+
 class LinkedList{
- constructor(){this.head=null}
- add(v){
-  const n=new Node(v);
-  if(!this.head)this.head=n;
-  else{let c=this.head;while(c.next)c=c.next;c.next=n}
+
+ constructor(){
+  this.head=null;
  }
- removeLast(){
-  if(!this.head)return null;
-  if(!this.head.next){const v=this.head.value;this.head=null;return v}
-  let c=this.head;
-  while(c.next.next)c=c.next;
-  const v=c.next.value;c.next=null;return v
+
+ add(value){
+
+  let newNode=new Node(value);
+
+  if(this.head===null){
+   this.head=newNode;
+   return;
+  }
+
+  let current=this.head;
+
+  while(current.next!==null){
+   current=current.next;
+  }
+
+  current.next=newNode;
  }
+
+ remove(value){
+
+  if(!this.head)return;
+
+  if(this.head.value===value){
+   this.head=this.head.next;
+   return;
+  }
+
+  let current=this.head;
+
+  while(current.next &&
+        current.next.value!==value){
+   current=current.next;
+  }
+
+  if(current.next){
+   current.next=current.next.next;
+  }
+ }
+
  values(){
-  let r=[],c=this.head;
-  while(c){r.push(c.value);c=c.next}
-  return r
+
+  let result=[];
+  let current=this.head;
+
+  while(current){
+   result.push(current.value);
+   current=current.next;
+  }
+
+  return result;
  }
 }
 
-const stack=new Stack(), queue=new Queue(), inventory=new LinkedList();
-let score=0,room=0,gameOver=false;
-const itemPool=['🗝️ Golden Key','🧪 Potion','🪙 Coin','💎 Gem','🛡️ Shield'];
-const enemyPool=['👹 Goblin','🧟 Zombie','🐺 Shadow Wolf'];
 
-const $=id=>document.getElementById(id);
+/* =========================
+   GAME DATA
+========================= */
 
-function render(){
- $('score').textContent=score;
- $('rooms').textContent=room+'/5';
- $('stackView').textContent=stack.a.length?stack.a.slice().reverse().join(' → ')+' ← Top':'Empty';
- $('queueView').textContent=queue.a.length?'Front → '+queue.a.join(' → ')+' → Rear':'Empty';
- const vals=inventory.values();
- $('listView').textContent=vals.length?vals.join(' → ')+' → NULL':'NULL';
-}
+const products=[
 
-function act(name){
- if(gameOver)return;
- stack.push(name);
- render();
- $('log').textContent='Stack push: '+name;
-}
+ {
+  name:"T-Shirt",
+  emoji:"👗",
+  price:180,
+  x:14,y:22
+ },
 
-function explore(){
- act('Explore');
- if(Math.random()<0.6){
-  const e=enemyPool[Math.floor(Math.random()*enemyPool.length)];
-  queue.enqueue(e);
-  $('scene').textContent='👾';
-  $('message').textContent=e+' joined the enemy queue!';
-  $('submessage').textContent='Attack the front enemy to dequeue it.';
-  $('log').textContent='Queue enqueue: '+e;
- }else{
-  $('scene').textContent='🎁';
-  $('message').textContent='You discovered an item!';
-  $('submessage').textContent='Collect it to add a node to the inventory.';
+ {
+  name:"Lipstick",
+  emoji:"💄",
+  price:120,
+  x:77,y:22
+ },
+
+ {
+  name:"Chocolate",
+  emoji:"🍫",
+  price:80,
+  x:14,y:78
+ },
+
+ {
+  name:"Earphones",
+  emoji:"🎧",
+  price:120,
+  x:77,y:78
+ },
+
+ {
+  name:"Handbag",
+  emoji:"👜",
+  price:0,
+  x:50,y:49
  }
- render();
+
+];
+
+
+let stack;
+let queue;
+let bag;
+
+let timeLeft;
+let score;
+let money;
+
+let px;
+let py;
+
+let playing=false;
+let timer;
+
+let itemElements=[];
+
+
+/* =========================
+   START GAME
+========================= */
+
+function startGame(){
+
+ document.getElementById("start").style.display="none";
+ document.getElementById("end").style.display="none";
+
+ stack=new Stack();
+
+ queue=new Queue(["A","B","C"]);
+
+ bag=new LinkedList();
+
+ timeLeft=120;
+ score=0;
+ money=500;
+
+ px=48;
+ py=68;
+
+ playing=true;
+
+ document.getElementById("player").style.left=px+"%";
+ document.getElementById("player").style.top=py+"%";
+
+
+ /* Remove old items */
+
+ document.querySelectorAll(".item").forEach(e=>e.remove());
+
+ itemElements=[];
+
+
+ /* Create shopping items */
+
+ products.forEach((product,index)=>{
+
+  let item=document.createElement("div");
+
+  item.className="item";
+
+  item.textContent=product.emoji;
+
+  item.style.left=product.x+"%";
+  item.style.top=product.y+"%";
+
+  item.dataset.index=index;
+
+  document.getElementById("world").appendChild(item);
+
+  itemElements.push(item);
+
+ });
+
+
+ update();
+
+ clearInterval(timer);
+
+ timer=setInterval(tick,1000);
+
+ showMessage("Find all 5 items! 🛍️");
 }
+
+
+/* =========================
+   TIMER
+========================= */
+
+function tick(){
+
+ if(!playing)return;
+
+ timeLeft--;
+
+ update();
+
+ if(timeLeft<=0){
+  gameOver();
+ }
+}
+
+
+/* =========================
+   UPDATE DISPLAY
+========================= */
+
+function update(){
+
+ let minutes=Math.floor(timeLeft/60);
+
+ let seconds=timeLeft%60;
+
+ document.getElementById("time").textContent=
+ minutes+":"+(seconds<10?"0":"")+seconds;
+
+ document.getElementById("score").textContent=score;
+
+ document.getElementById("money").textContent="₹"+money;
+
+ document.getElementById("count").textContent=
+ bag.values().length+"/5";
+
+ document.getElementById("stack").textContent=
+ JSON.stringify(stack.data);
+
+ document.getElementById("queue").textContent=
+ "["+queue.data.join(",")+"]";
+
+ document.getElementById("list").textContent=
+ bag.values().join(" → ") || "NULL";
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+function showMessage(text){
+
+ let box=document.getElementById("msg");
+
+ box.textContent=text;
+
+ box.style.display="block";
+
+ clearTimeout(box.hideTimer);
+
+ box.hideTimer=setTimeout(()=>{
+  box.style.display="none";
+ },1800);
+}
+
+
+/* =========================
+   COLLECT ITEM
+========================= */
 
 function collect(){
- if(gameOver)return;
- const item=itemPool[inventory.values().length%itemPool.length];
- inventory.add(item);
- score+=10;
- act('Collect');
- $('scene').textContent='🎒';
- $('message').textContent='Collected '+item;
- $('submessage').textContent='A new node was added to the Linked List.';
- render();
-}
 
-function attack(){
- if(gameOver)return;
- if(!queue.a.length){
-  $('message').textContent='No enemy is waiting!';
-  $('submessage').textContent='Explore to add enemies to the queue.';
+ if(!playing)return;
+
+ let found=-1;
+
+ itemElements.forEach((element,index)=>{
+
+  if(element.style.display!=="none"){
+
+   let dx=px-products[index].x;
+   let dy=py-products[index].y;
+
+   let distance=Math.sqrt(dx*dx+dy*dy);
+
+   if(distance<10){
+    found=index;
+   }
+  }
+
+ });
+
+
+ if(found===-1){
+
+  showMessage("Move closer to an item! 👀");
+
   return;
  }
- const e=queue.dequeue();
- score+=20;
- act('Attack '+e);
- $('scene').textContent='💥';
- $('message').textContent=e+' defeated!';
- $('submessage').textContent='It was removed from the front of the Queue.';
- $('log').textContent='Queue dequeue: '+e;
- render();
+
+
+ let product=products[found];
+
+
+ if(product.price>money){
+
+  showMessage("Not enough budget! 💸");
+
+  return;
+ }
+
+
+ /* Linked List */
+
+ bag.add(product.name);
+
+
+ /* Stack */
+
+ stack.push(product.name);
+
+
+ money-=product.price;
+
+ score+=100;
+
+ itemElements[found].style.display="none";
+
+ showMessage(product.name+" added to bag! 🛍️");
+
+ update();
 }
+
+
+/* =========================
+   UNDO
+========================= */
 
 function undo(){
- if(gameOver)return;
- const x=stack.pop();
- if(!x){
-  $('log').textContent='Stack is empty — nothing to undo.';
+
+ if(!playing)return;
+
+ if(stack.data.length===0){
+
+  showMessage("Nothing to undo!");
+
   return;
  }
- if(x.startsWith('Attack'))score=Math.max(0,score-20);
- if(x==='Collect'){inventory.removeLast();score=Math.max(0,score-10)}
- $('message').textContent='Undid: '+x;
- $('submessage').textContent='The last action was popped from the Stack.';
- $('log').textContent='Stack pop: '+x;
- render();
+
+
+ /* POP = remove latest action */
+
+ let removed=stack.pop();
+
+ let index=products.findIndex(
+  product=>product.name===removed
+ );
+
+
+ if(index!==-1){
+
+  bag.remove(removed);
+
+  money+=products[index].price;
+
+  score=Math.max(0,score-100);
+
+  itemElements[index].style.display="flex";
+
+  showMessage("UNDO: "+removed+" ↩️");
+ }
+
+ update();
 }
 
-function nextRoom(){
- if(gameOver)return;
- if(room>=5){win();return}
- if(!inventory.values().length){
-  $('message').textContent='You need at least one item!';
-  $('submessage').textContent='Explore and collect an item before moving on.';
+
+/* =========================
+   MOVEMENT
+========================= */
+
+function move(dx,dy){
+
+ if(!playing)return;
+
+ let length=Math.hypot(dx,dy);
+
+ if(length===0)return;
+
+ px+=dx/length*0.8;
+
+ py+=dy/length*0.8;
+
+ px=Math.max(3,Math.min(94,px));
+
+ py=Math.max(5,Math.min(91,py));
+
+ document.getElementById("player").style.left=px+"%";
+
+ document.getElementById("player").style.top=py+"%";
+
+
+ /* Check checkout */
+
+ if(
+  bag.values().length===5 &&
+  Math.abs(px-50)<10 &&
+  Math.abs(py-49)<10
+ ){
+
+  checkout();
+ }
+}
+
+
+/* =========================
+   KEYBOARD SUPPORT
+========================= */
+
+let keys={};
+
+document.addEventListener("keydown",function(e){
+
+ keys[e.key.toLowerCase()]=true;
+
+ if(e.key.toLowerCase()==="z"){
+  undo();
+ }
+
+});
+
+
+document.addEventListener("keyup",function(e){
+
+ keys[e.key.toLowerCase()]=false;
+
+});
+
+
+setInterval(function(){
+
+ if(!playing)return;
+
+ let dx=0;
+ let dy=0;
+
+ if(keys["arrowleft"]||keys["a"])dx--;
+
+ if(keys["arrowright"]||keys["d"])dx++;
+
+ if(keys["arrowup"]||keys["w"])dy--;
+
+ if(keys["arrowdown"]||keys["s"])dy++;
+
+ move(dx,dy);
+
+},40);
+
+
+/* =========================
+   CHECKOUT
+========================= */
+
+function checkout(){
+
+ if(bag.values().length<5){
+
+  showMessage(
+   "You still need "+
+   (5-bag.values().length)+
+   " item(s)! 🛍️"
+  );
+
   return;
  }
- room++;
- act('Next Room');
- $('scene').textContent=room===5?'🚪':'🗺️';
- $('message').textContent=room===5?'The exit is here! 🎉':'Room '+room+' unlocked!';
- $('submessage').textContent=room===5?'Press Escape to finish the game.':'Explore this room for more items and enemies.';
- $('next').textContent=room===5?'🏆 Escape!':'➡️ Next Room';
- render();
+
+
+ /* QUEUE DEQUEUE */
+
+ let customer=queue.dequeue();
+
+ score+=250;
+
+ playing=false;
+
+ clearInterval(timer);
+
+
+ document.getElementById("endTitle").textContent=
+ "🎉 SHOPPING COMPLETE!";
+
+ document.getElementById("endText").innerHTML=
+ "You completed your shopping!<br><br>"+
+ "⭐ Score: <b>"+score+"</b><br>"+
+ "💰 Money left: <b>₹"+money+"</b>";
+
+ document.getElementById("endDSA").innerHTML=
+ "🧠 <b>DSA Used:</b><br>"+
+ "Stack → stored shopping actions<br>"+
+ "Queue → customer "+customer+
+ " served first (FIFO)<br>"+
+ "Linked List → stored your shopping bag";
+
+
+ document.getElementById("end").style.display="flex";
 }
 
-function win(){
- if(gameOver)return;
- gameOver=true;
- score+=50;
- $('scene').textContent='🏆';
- $('message').innerHTML='<span class="win">YOU ESCAPED! 🎉</span>';
- $('submessage').textContent='Final score: '+score+' — You used Stack, Queue and Linked List.';
- $('log').textContent='Game completed!';
- render();
+
+/* =========================
+   GAME OVER
+========================= */
+
+function gameOver(){
+
+ playing=false;
+
+ clearInterval(timer);
+
+ document.getElementById("endTitle").textContent=
+ "⏰ MALL CLOSED!";
+
+ document.getElementById("endText").innerHTML=
+ "Time's up!<br><br>"+
+ "You collected <b>"+
+ bag.values().length+
+ "/5</b> items.";
+
+ document.getElementById("endDSA").innerHTML=
+ "Stack = shopping history<br>"+
+ "Queue = checkout order<br>"+
+ "Linked List = shopping bag";
+
+ document.getElementById("end").style.display="flex";
 }
 
-function reset(){
- score=0;room=0;gameOver=false;
- stack.a=[];queue.a=[];inventory.head=null;
- $('next').textContent='➡️ Next Room';
- $('scene').textContent='🗝️';
- $('message').textContent='Find the key and escape the dungeon!';
- $('submessage').textContent='Explore the room, collect items, and defeat enemies.';
- $('log').textContent='Game restarted.';
- render();
+
+/* =========================
+   MOBILE JOYSTICK
+========================= */
+
+let dragging=false;
+
+let joystick=document.getElementById("joystick");
+
+let stick=document.getElementById("stick");
+
+
+joystick.addEventListener(
+ "pointerdown",
+ function(e){
+
+  dragging=true;
+
+  joystick.setPointerCapture(e.pointerId);
+
+  joystickMove(e);
+ }
+);
+
+
+joystick.addEventListener(
+ "pointermove",
+ function(e){
+
+  if(dragging){
+   joystickMove(e);
+  }
+ }
+);
+
+
+joystick.addEventListener(
+ "pointerup",
+ function(){
+
+  dragging=false;
+
+  stick.style.left="31px";
+  stick.style.top="31px";
+ }
+);
+
+
+function joystickMove(e){
+
+ let rect=joystick.getBoundingClientRect();
+
+ let centerX=rect.left+rect.width/2;
+ let centerY=rect.top+rect.height/2;
+
+ let dx=e.clientX-centerX;
+ let dy=e.clientY-centerY;
+
+ let distance=Math.hypot(dx,dy);
+
+ if(distance>38){
+
+  dx=dx/distance*38;
+  dy=dy/distance*38;
+ }
+
+
+ stick.style.left=(31+dx)+"px";
+ stick.style.top=(31+dy)+"px";
+
+ move(dx,dy);
 }
 
-$('explore').onclick=explore;
-$('collect').onclick=collect;
-$('attack').onclick=attack;
-$('undo').onclick=undo;
-$('next').onclick=nextRoom;
-$('reset').onclick=reset;
-render();
+
+/* Keyboard shortcut:
+   Z = UNDO
+*/
+
 </script>
+
 </body>
-</html>
+</html> 
