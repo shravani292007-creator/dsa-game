@@ -13,39 +13,110 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#17153b,#35205f);
+  background: linear-gradient(135deg, #17133d, #43256b);
   color: white;
+}
+
+.screen {
+  min-height: 100vh;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.screen.active {
+  display: flex;
+}
+
+.card {
+  width: 100%;
+  max-width: 500px;
   text-align: center;
 }
 
-h1 {
-  margin: 15px 0 5px;
+.title {
+  font-size: 42px;
+  margin-bottom: 5px;
 }
 
-#game {
-  width: 95%;
-  max-width: 500px;
-  margin: auto;
+.subtitle {
+  color: #d8d4ff;
 }
 
-#stats {
+.panel {
+  background: #24204c;
+  border-radius: 18px;
+  padding: 18px;
+  margin: 15px 0;
+  text-align: left;
+}
+
+.panel h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.instruction {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+.dsa {
+  font-size: 14px;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 14px 22px;
+  margin: 7px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: #806cff;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.96);
+}
+
+.bigButton {
+  width: 80%;
+  font-size: 20px;
+}
+
+/* GAME */
+
+#gameScreen {
+  align-items: flex-start;
+}
+
+.gameCard {
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+}
+
+.topBar {
   display: flex;
   justify-content: space-around;
-  background: #24204a;
-  padding: 10px;
+  background: #24204c;
   border-radius: 12px;
-  margin: 10px 0;
+  padding: 12px 5px;
+  margin-bottom: 10px;
   font-weight: bold;
 }
 
 #board {
   position: relative;
-  height: 430px;
-  background: #10152f;
-  border: 3px solid #8d7aff;
-  border-radius: 15px;
+  width: 100%;
+  height: 500px;
+  background: #0e1230;
+  border: 3px solid #806cff;
+  border-radius: 18px;
   overflow: hidden;
-  touch-action: none;
 }
 
 .bubble {
@@ -53,178 +124,378 @@ h1 {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.6);
-  box-shadow: 0 3px 8px #000;
+  border: 3px solid rgba(255,255,255,.7);
+  box-shadow: 0 3px 8px black;
 }
 
-.red { background:#ff4d6d; }
-.blue { background:#4da6ff; }
-.green { background:#49d17d; }
-.yellow { background:#ffd447; }
-.purple { background:#b56cff; }
+.red {
+  background: #ff4d6d;
+}
+
+.blue {
+  background: #4da6ff;
+}
+
+.green {
+  background: #45d47b;
+}
+
+.yellow {
+  background: #ffd447;
+}
+
+.purple {
+  background: #b66cff;
+}
 
 #shooter {
   position: absolute;
-  bottom: 15px;
+  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  width: 45px;
-  height: 45px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   border: 4px solid white;
 }
 
-#aim {
+#aimLine {
   position: absolute;
-  bottom: 58px;
+  bottom: 65px;
   left: 50%;
   width: 4px;
   height: 90px;
   background: white;
-  transform-origin: bottom;
-  transform: translateX(-50%) rotate(0deg);
+  transform: translateX(-50%);
 }
 
-button {
-  border: none;
-  padding: 12px 18px;
-  margin: 6px;
-  border-radius: 10px;
-  background: #8d7aff;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+#bubbleInfo {
+  display: flex;
+  justify-content: center;
+  gap: 35px;
+  margin: 12px 0;
 }
 
-button:hover {
-  background: #a99cff;
+.bubbleBox {
+  background: #24204c;
+  padding: 10px 18px;
+  border-radius: 12px;
+}
+
+.previewBubble {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin: 5px auto;
+  border: 2px solid white;
 }
 
 #message {
-  min-height: 25px;
+  min-height: 24px;
   font-weight: bold;
 }
 
-#dsa {
-  margin-top: 12px;
-  background: #24204a;
-  border-radius: 12px;
+#dsaGame {
+  background: #24204c;
+  border-radius: 14px;
   padding: 12px;
-  text-align: left;
-  font-size: 14px;
-}
-
-#dsa h3 {
-  text-align: center;
-  margin: 5px;
-}
-
-#startScreen {
-  position: absolute;
-  inset: 0;
-  background: rgba(10,10,30,.95);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-#startScreen h2 {
-  font-size: 30px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-#history {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 13px;
-  color: #ddd;
+  text-align: left;
 }
+
+#dsaGame p {
+  margin: 7px 0;
+}
+
+/* END */
+
+.result {
+  font-size: 22px;
+  margin: 12px;
+}
+
+.finalDsa {
+  text-align: left;
+  background: #24204c;
+  border-radius: 16px;
+  padding: 18px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="game">
 
-<h1>🫧 BUBBLE SHOOTER</h1>
-<p>Match 3 bubbles and use DSA!</p>
+<!-- =========================
+     PAGE 1 - START
+========================= -->
 
-<div id="stats">
-  <span>⭐ Score: <b id="score">0</b></span>
-  <span>⏱️ <b id="time">60</b></span>
-  <span>❤️ <b id="lives">3</b></span>
-</div>
+<section id="startScreen" class="screen active">
 
-<div id="board">
+<div class="card">
 
-  <div id="startScreen">
-    <h2>🫧 Bubble Shooter</h2>
-    <p>Match 3 bubbles!</p>
-    <p>Stack • Queue • Linked List</p>
-    <button onclick="startGame()">START GAME</button>
+  <div class="title">🫧</div>
+
+  <h1>BUBBLE SHOOTER</h1>
+
+  <p class="subtitle">
+    Match • Shoot • Score!
+  </p>
+
+  <div class="panel">
+
+    <h2>🎮 HOW TO PLAY</h2>
+
+    <div class="instruction">
+      🎯 <b>Aim</b> the shooter at the bubbles.
+    </div>
+
+    <div class="instruction">
+      🫧 Your <b>current bubble</b> is shown at the bottom.
+    </div>
+
+    <div class="instruction">
+      🔮 The <b>next bubble</b> is shown beside it.
+    </div>
+
+    <div class="instruction">
+      💥 Match <b>3 or more bubbles of the same color</b>
+      to pop them.
+    </div>
+
+    <div class="instruction">
+      ⭐ Earn points for every successful match.
+    </div>
+
+    <div class="instruction">
+      ❤️ You have <b>3 lives</b>.
+    </div>
+
+    <div class="instruction">
+      ⏱️ Finish before the timer reaches zero!
+    </div>
+
   </div>
 
-  <div id="aim"></div>
-  <div id="shooter"></div>
+
+  <div class="panel dsa">
+
+    <h2>📚 DSA USED</h2>
+
+    <p>
+      📚 <b>STACK</b> — stores shot history (LIFO)
+    </p>
+
+    <p>
+      🚶 <b>QUEUE</b> — stores upcoming bubbles (FIFO)
+    </p>
+
+    <p>
+      🔗 <b>LINKED LIST</b> — stores popped-bubble history
+    </p>
+
+  </div>
+
+
+  <button class="bigButton" onclick="startGame()">
+    🎮 START GAME
+  </button>
 
 </div>
 
-<div>
-  <button onclick="shoot()">🎯 SHOOT</button>
-  <button onclick="undoShot()">↩️ UNDO</button>
-  <button onclick="restartGame()">🔄 RESTART</button>
+</section>
+
+
+<!-- =========================
+     PAGE 2 - GAME
+========================= -->
+
+<section id="gameScreen" class="screen">
+
+<div class="gameCard">
+
+  <h1>🫧 BUBBLE SHOOTER</h1>
+
+  <div class="topBar">
+
+    <span>⭐ <span id="score">0</span></span>
+
+    <span>⏱️ <span id="timer">60</span></span>
+
+    <span>❤️ <span id="lives">3</span></span>
+
+  </div>
+
+
+  <div id="board">
+
+    <div id="aimLine"></div>
+
+    <div id="shooter"></div>
+
+  </div>
+
+
+  <!-- CURRENT + NEXT -->
+
+  <div id="bubbleInfo">
+
+    <div class="bubbleBox">
+
+      CURRENT
+
+      <div id="currentBubble"
+           class="previewBubble">
+      </div>
+
+    </div>
+
+
+    <div class="bubbleBox">
+
+      NEXT
+
+      <div id="nextBubble"
+           class="previewBubble">
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <button onclick="shoot()">
+    🎯 SHOOT
+  </button>
+
+  <button onclick="undoShot()">
+    ↩️ UNDO SHOT
+  </button>
+
+
+  <div id="message">
+    Match 3 bubbles!
+  </div>
+
+
+  <div id="dsaGame">
+
+    <b>📚 DSA STATUS</b>
+
+    <p>
+      Stack: <span id="stackView">Empty</span>
+    </p>
+
+    <p>
+      Queue: <span id="queueView">Empty</span>
+    </p>
+
+    <p>
+      Linked List: <span id="listView">NULL</span>
+    </p>
+
+  </div>
+
 </div>
 
-<div id="message">Press START GAME!</div>
+</section>
 
-<div id="history">
-  🫧 Shot Stack: <span id="stackView">Empty</span><br>
-  🚶 Bubble Queue: <span id="queueView">Waiting...</span><br>
-  🔗 Linked List: <span id="listView">NULL</span>
+
+<!-- =========================
+     PAGE 3 - END
+========================= -->
+
+<section id="endScreen" class="screen">
+
+<div class="card">
+
+  <div class="title">🏆</div>
+
+  <h1>GAME OVER!</h1>
+
+  <p id="endMessage">
+    Great job!
+  </p>
+
+
+  <div class="panel">
+
+    <div class="result">
+      ⭐ Score:
+      <b id="finalScore">0</b>
+    </div>
+
+    <div class="result">
+      💥 Bubbles Popped:
+      <b id="finalPopped">0</b>
+    </div>
+
+    <div class="result">
+      🎯 Shots:
+      <b id="finalShots">0</b>
+    </div>
+
+  </div>
+
+
+  <div class="finalDsa">
+
+    <h2>📚 DSA USED IN THE GAME</h2>
+
+    <p>
+      📚 <b>Stack</b><br>
+      Shot history was stored using LIFO.
+    </p>
+
+    <p>
+      🚶 <b>Queue</b><br>
+      Upcoming bubbles were handled using FIFO.
+    </p>
+
+    <p>
+      🔗 <b>Linked List</b><br>
+      Popped bubbles were stored as a linked history.
+    </p>
+
+  </div>
+
+
+  <button class="bigButton" onclick="startGame()">
+    🔄 PLAY AGAIN
+  </button>
+
+  <button onclick="showStart()">
+    🏠 HOME
+  </button>
+
 </div>
 
-<div id="dsa">
-<h3>📚 DSA USED IN THIS GAME</h3>
+</section>
 
-<p>
-<b>📚 STACK — LIFO:</b><br>
-Every shot is pushed into the Stack.
-The latest shot can be removed first using Undo.
-</p>
-
-<p>
-<b>🚶 QUEUE — FIFO:</b><br>
-Upcoming bubbles wait in a Queue.
-The first bubble in the Queue is used first.
-</p>
-
-<p>
-<b>🔗 LINKED LIST:</b><br>
-Every bubble popped is added to the Linked List,
-creating a history of popped bubbles.
-</p>
-</div>
-
-</div>
 
 <script>
 
-/* =========================
-   DSA STRUCTURES
-========================= */
+/* =================================
+   DSA: STACK
+================================= */
 
-// STACK
 let shotStack = [];
 
 function pushShot(color) {
   shotStack.push(color);
 }
 
-// QUEUE
+function popShot() {
+  return shotStack.pop();
+}
+
+
+/* =================================
+   DSA: QUEUE
+================================= */
+
 let bubbleQueue = [];
 
 function enqueue(color) {
@@ -235,17 +506,24 @@ function dequeue() {
   return bubbleQueue.shift();
 }
 
-// LINKED LIST
+
+/* =================================
+   DSA: LINKED LIST
+================================= */
+
 class Node {
+
   constructor(value) {
     this.value = value;
     this.next = null;
   }
+
 }
 
 let head = null;
 
 function addToLinkedList(value) {
+
   let newNode = new Node(value);
 
   if (head === null) {
@@ -263,17 +541,11 @@ function addToLinkedList(value) {
 }
 
 
-/* =========================
+/* =================================
    GAME VARIABLES
-========================= */
+================================= */
 
-let score = 0;
-let lives = 3;
-let time = 60;
-let playing = false;
-let timer;
-
-let colors = [
+const colors = [
   "red",
   "blue",
   "green",
@@ -281,269 +553,27 @@ let colors = [
   "purple"
 ];
 
+let currentBubble = "";
+let nextBubble = "";
+
+let score = 0;
+let lives = 3;
+let time = 60;
+
+let poppedCount = 0;
+let shots = 0;
+
+let playing = false;
+let timerInterval;
+
 let board = document.getElementById("board");
 
 let bubbles = [];
 
 
-/* =========================
-   START GAME
-========================= */
-
-function startGame() {
-
-  document.getElementById("startScreen")
-    .classList.add("hidden");
-
-  score = 0;
-  lives = 3;
-  time = 60;
-
-  shotStack = [];
-  bubbleQueue = [];
-  head = null;
-
-  playing = true;
-
-  createBubbles();
-
-  // Create Queue
-  for (let i = 0; i < 5; i++) {
-    enqueue(randomColor());
-  }
-
-  updateScreen();
-
-  clearInterval(timer);
-
-  timer = setInterval(function() {
-
-    time--;
-
-    document.getElementById("time").textContent = time;
-
-    if (time <= 0) {
-      endGame("⏰ TIME'S UP!");
-    }
-
-  }, 1000);
-
-}
-
-
-/* =========================
-   CREATE BUBBLES
-========================= */
-
-function createBubbles() {
-
-  // Remove old bubbles
-  document.querySelectorAll(".bubble")
-    .forEach(b => b.remove());
-
-  bubbles = [];
-
-  for (let row = 0; row < 5; row++) {
-
-    for (let col = 0; col < 7; col++) {
-
-      let bubble = document.createElement("div");
-
-      let color = randomColor();
-
-      bubble.className = "bubble " + color;
-
-      bubble.dataset.color = color;
-
-      bubble.style.left =
-        (20 + col * 58) + "px";
-
-      bubble.style.top =
-        (15 + row * 48) + "px";
-
-      board.appendChild(bubble);
-
-      bubbles.push(bubble);
-    }
-  }
-}
-
-
-/* =========================
-   SHOOT
-========================= */
-
-function shoot() {
-
-  if (!playing) return;
-
-  if (bubbleQueue.length === 0) {
-    enqueue(randomColor());
-  }
-
-  // QUEUE: take first bubble
-  let color = dequeue();
-
-  // STACK: store shot
-  pushShot(color);
-
-  // Add another upcoming bubble
-  enqueue(randomColor());
-
-  // Find bubbles of same color
-  let same = bubbles.filter(
-    b => b.dataset.color === color
-  );
-
-  if (same.length >= 3) {
-
-    let popped = same.slice(0, 3);
-
-    popped.forEach(b => {
-
-      b.remove();
-
-      bubbles = bubbles.filter(x => x !== b);
-
-      // LINKED LIST
-      addToLinkedList(color);
-
-    });
-
-    score += 30;
-
-    document.getElementById("message").textContent =
-      "💥 MATCH! 3 bubbles popped!";
-
-  } else {
-
-    score += 5;
-
-    lives--;
-
-    document.getElementById("message").textContent =
-      "😅 No match!";
-
-    if (lives <= 0) {
-      endGame("💔 NO LIVES LEFT!");
-    }
-  }
-
-  updateScreen();
-
-  if (bubbles.length < 10 && playing) {
-    createBubbles();
-  }
-}
-
-
-/* =========================
-   UNDO = STACK POP
-========================= */
-
-function undoShot() {
-
-  if (!playing) return;
-
-  if (shotStack.length === 0) {
-
-    document.getElementById("message").textContent =
-      "Stack is empty!";
-
-    return;
-  }
-
-  // STACK: remove latest shot
-  let removed = shotStack.pop();
-
-  score = Math.max(0, score - 5);
-
-  document.getElementById("message").textContent =
-    "↩️ Removed " + removed + " using STACK POP.";
-
-  updateScreen();
-}
-
-
-/* =========================
-   UPDATE SCREEN
-========================= */
-
-function updateScreen() {
-
-  document.getElementById("score").textContent = score;
-
-  document.getElementById("lives").textContent = lives;
-
-  document.getElementById("time").textContent = time;
-
-  // Stack
-  document.getElementById("stackView").textContent =
-    shotStack.length
-      ? shotStack.slice(-5).join(" → ")
-      : "Empty";
-
-  // Queue
-  document.getElementById("queueView").textContent =
-    bubbleQueue.slice(0,5).join(" → ");
-
-  // Linked List
-  let values = [];
-
-  let current = head;
-
-  while (current !== null) {
-
-    values.push(current.value);
-
-    current = current.next;
-  }
-
-  document.getElementById("listView").textContent =
-    values.length
-      ? values.join(" → ") + " → NULL"
-      : "NULL";
-}
-
-
-/* =========================
-   GAME OVER
-========================= */
-
-function endGame(text) {
-
-  playing = false;
-
-  clearInterval(timer);
-
-  document.getElementById("message").textContent =
-    text + " Final Score: " + score;
-
-}
-
-
-/* =========================
-   RESTART
-========================= */
-
-function restartGame() {
-
-  clearInterval(timer);
-
-  document.getElementById("startScreen")
-    .classList.remove("hidden");
-
-  document.getElementById("message").textContent =
-    "Press START GAME!";
-
-  document.getElementById("time").textContent = 60;
-
-}
-
-
-/* =========================
+/* =================================
    RANDOM COLOR
-========================= */
+================================= */
 
 function randomColor() {
 
@@ -553,7 +583,374 @@ function randomColor() {
 
 }
 
+
+/* =================================
+   SCREEN CHANGE
+================================= */
+
+function showScreen(id) {
+
+  document.querySelectorAll(".screen")
+    .forEach(screen => {
+      screen.classList.remove("active");
+    });
+
+  document.getElementById(id)
+    .classList.add("active");
+
+}
+
+
+/* =================================
+   START GAME
+================================= */
+
+function startGame() {
+
+  clearInterval(timerInterval);
+
+  score = 0;
+  lives = 3;
+  time = 60;
+  poppedCount = 0;
+  shots = 0;
+
+  shotStack = [];
+  bubbleQueue = [];
+  head = null;
+
+  playing = true;
+
+  currentBubble = randomColor();
+
+  nextBubble = randomColor();
+
+  for (let i = 0; i < 5; i++) {
+    enqueue(randomColor());
+  }
+
+  createBoard();
+
+  updateBubblePreview();
+
+  updateScreen();
+
+  showScreen("gameScreen");
+
+  timerInterval = setInterval(() => {
+
+    time--;
+
+    document.getElementById("timer")
+      .textContent = time;
+
+    if (time <= 0) {
+
+      endGame("⏰ Time's Up!");
+
+    }
+
+  }, 1000);
+
+}
+
+
+/* =================================
+   CREATE BUBBLE BOARD
+================================= */
+
+function createBoard() {
+
+  document.querySelectorAll(".bubble")
+    .forEach(b => b.remove());
+
+  bubbles = [];
+
+  for (let row = 0; row < 5; row++) {
+
+    for (let col = 0; col < 7; col++) {
+
+      let bubble =
+        document.createElement("div");
+
+      let color = randomColor();
+
+      bubble.className =
+        "bubble " + color;
+
+      bubble.dataset.color = color;
+
+      bubble.style.left =
+        (18 + col * 62) + "px";
+
+      bubble.style.top =
+        (15 + row * 48) + "px";
+
+      board.appendChild(bubble);
+
+      bubbles.push(bubble);
+
+    }
+
+  }
+
+}
+
+
+/* =================================
+   SHOW CURRENT + NEXT
+================================= */
+
+function updateBubblePreview() {
+
+  let current =
+    document.getElementById("currentBubble");
+
+  let next =
+    document.getElementById("nextBubble");
+
+  current.className =
+    "previewBubble " + currentBubble;
+
+  next.className =
+    "previewBubble " + nextBubble;
+
+  document.getElementById("shooter")
+    .className = currentBubble;
+
+}
+
+
+/* =================================
+   SHOOT
+================================= */
+
+function shoot() {
+
+  if (!playing) return;
+
+  shots++;
+
+  // STACK
+  pushShot(currentBubble);
+
+
+  // Find matching bubbles
+  let matching =
+    bubbles.filter(
+      bubble =>
+      bubble.dataset.color === currentBubble
+    );
+
+
+  if (matching.length >= 3) {
+
+    let popped =
+      matching.slice(0, 3);
+
+
+    popped.forEach(bubble => {
+
+      bubble.remove();
+
+      bubbles =
+        bubbles.filter(b => b !== bubble);
+
+
+      // LINKED LIST
+      addToLinkedList(currentBubble);
+
+      poppedCount++;
+
+    });
+
+
+    score += 30;
+
+    document.getElementById("message")
+      .textContent =
+      "💥 AMAZING! 3 bubbles popped!";
+
+
+  } else {
+
+    lives--;
+
+    document.getElementById("message")
+      .textContent =
+      "😅 No match! Try again.";
+
+  }
+
+
+  // QUEUE
+  currentBubble = nextBubble;
+
+  nextBubble = dequeue();
+
+  if (!nextBubble) {
+    nextBubble = randomColor();
+  }
+
+  enqueue(randomColor());
+
+
+  updateBubblePreview();
+
+  updateScreen();
+
+
+  if (lives <= 0) {
+
+    endGame("💔 You ran out of lives!");
+
+    return;
+
+  }
+
+
+  // Refill board
+  if (bubbles.length < 12) {
+    createBoard();
+  }
+
+}
+
+
+/* =================================
+   UNDO
+================================= */
+
+function undoShot() {
+
+  if (!playing) return;
+
+  if (shotStack.length === 0) {
+
+    document.getElementById("message")
+      .textContent =
+      "📚 Stack is empty!";
+
+    return;
+
+  }
+
+  let removed = popShot();
+
+  score = Math.max(0, score - 5);
+
+  document.getElementById("message")
+    .textContent =
+    "↩️ Removed " +
+    removed +
+    " using Stack POP.";
+
+  updateScreen();
+
+}
+
+
+/* =================================
+   UPDATE DSA DISPLAY
+================================= */
+
+function updateScreen() {
+
+  document.getElementById("score")
+    .textContent = score;
+
+  document.getElementById("lives")
+    .textContent = lives;
+
+  document.getElementById("timer")
+    .textContent = time;
+
+
+  // STACK
+
+  document.getElementById("stackView")
+    .textContent =
+    shotStack.length
+      ? shotStack.slice(-5).join(" → ")
+      : "Empty";
+
+
+  // QUEUE
+
+  document.getElementById("queueView")
+    .textContent =
+    bubbleQueue.length
+      ? bubbleQueue.slice(0, 5).join(" → ")
+      : "Empty";
+
+
+  // LINKED LIST
+
+  let values = [];
+
+  let current = head;
+
+  while (current !== null) {
+
+    values.push(current.value);
+
+    current = current.next;
+
+  }
+
+  document.getElementById("listView")
+    .textContent =
+    values.length
+      ? values.join(" → ") + " → NULL"
+      : "NULL";
+
+}
+
+
+/* =================================
+   END GAME
+================================= */
+
+function endGame(message) {
+
+  if (!playing) return;
+
+  playing = false;
+
+  clearInterval(timerInterval);
+
+  document.getElementById("endMessage")
+    .textContent = message;
+
+  document.getElementById("finalScore")
+    .textContent = score;
+
+  document.getElementById("finalPopped")
+    .textContent = poppedCount;
+
+  document.getElementById("finalShots")
+    .textContent = shots;
+
+  showScreen("endScreen");
+
+}
+
+
+/* =================================
+   HOME
+================================= */
+
+function showStart() {
+
+  clearInterval(timerInterval);
+
+  playing = false;
+
+  showScreen("startScreen");
+
+}
+
 </script>
 
 </body>
-</html>
+    </html>
