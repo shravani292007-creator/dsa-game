@@ -2,906 +2,1373 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>Mall Rush - DSA Game</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Archery Rush - DSA Game</title>
 
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;background:#191326;color:white;font-family:Arial,sans-serif;
- overflow:hidden
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
 }
-button{font-family:Arial;border:0;cursor:pointer}
 
-#game{
- width:100vw;height:100vh;max-width:900px;margin:auto;
- position:relative;overflow:hidden;background:#ead9e5
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#10182d;
+    color:white;
 }
+
+button{
+    border:none;
+    cursor:pointer;
+}
+
+/* ================= START SCREEN ================= */
 
 .screen{
- position:absolute;inset:0;z-index:50;
- display:flex;align-items:center;justify-content:center;
- background:linear-gradient(135deg,#25152f,#8c407b)
+    display:none;
+    width:100vw;
+    height:100vh;
+    position:relative;
+    overflow:hidden;
 }
 
-.card{
- width:90%;max-width:550px;background:white;color:#2c2030;
- border-radius:25px;padding:28px;text-align:center;
- box-shadow:0 15px 50px #0008
+.screen.active{
+    display:flex;
 }
 
-.card h1{color:#8c407b;font-size:38px;margin:5px}
-.card p{line-height:1.5}
-
-.start,.restart{
- background:#8c407b;color:white;padding:14px 25px;
- border-radius:13px;font-weight:bold;font-size:16px
+#startScreen{
+    align-items:center;
+    justify-content:center;
+    background:
+        linear-gradient(
+            to bottom,
+            #172849 0%,
+            #30496f 48%,
+            #c27b50 49%,
+            #6e4030 100%
+        );
 }
 
-#hud{
- position:absolute;top:0;left:0;right:0;z-index:20;
- background:#29182f;padding:8px;display:flex;
- justify-content:space-around;gap:5px
+#startScreen:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(255,225,155,.55),
+            transparent 25%
+        );
 }
 
-.stat{
- background:#452740;border-radius:10px;
- padding:6px 9px;text-align:center;font-size:11px
-}
-.stat b{display:block;font-size:17px}
+/* Castle silhouette */
 
-#world{
- position:absolute;top:48px;bottom:0;left:0;right:0;
- background:#eee0e8
-}
+.castle{
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:47%;
+    background:#704837;
 
-.shop{
- position:absolute;border:3px solid #65435e;
- border-radius:18px;display:flex;
- flex-direction:column;align-items:center;justify-content:center;
- color:#493046;font-weight:bold;
- box-shadow:0 4px 10px #0002
-}
-.shop span{font-size:30px}
-.fashion{left:4%;top:7%;width:29%;height:25%;background:#f5b9d7}
-.beauty{right:4%;top:7%;width:29%;height:25%;background:#c9c0ff}
-.food{left:4%;bottom:8%;width:29%;height:25%;background:#bde7d2}
-.tech{right:4%;bottom:8%;width:29%;height:25%;background:#ffd19e}
-.checkout{left:38%;top:38%;width:24%;height:22%;background:#fff09b}
-
-#player{
- position:absolute;width:42px;height:42px;
- border-radius:50%;background:#7c3aed;
- border:4px solid white;z-index:10;
- display:flex;align-items:center;justify-content:center;
- font-size:22px;box-shadow:0 3px 8px #0007
-}
-
-.item{
- position:absolute;width:34px;height:34px;
- background:white;border:2px solid #5d3d56;
- border-radius:9px;display:flex;
- align-items:center;justify-content:center;
- font-size:21px;z-index:8;
- box-shadow:0 3px 7px #0005
+    clip-path:polygon(
+        0 25%,
+        7% 25%,
+        7% 10%,
+        15% 10%,
+        15% 27%,
+        24% 27%,
+        24% 8%,
+        32% 8%,
+        32% 25%,
+        40% 25%,
+        40% 12%,
+        48% 12%,
+        48% 25%,
+        56% 25%,
+        56% 8%,
+        64% 8%,
+        64% 27%,
+        74% 27%,
+        74% 10%,
+        82% 10%,
+        82% 25%,
+        91% 25%,
+        91% 5%,
+        100% 5%,
+        100% 100%,
+        0 100%
+    );
 }
 
-#dsa{
- position:absolute;right:8px;top:57px;z-index:18;
- width:190px;background:#ffffffeF;color:#332338;
- border-radius:12px;padding:9px;font-size:10px;
- box-shadow:0 3px 10px #0003
-}
-#dsa strong{color:#8c407b;font-size:13px}
+/* Start card */
 
-#joystick{
- position:absolute;left:18px;bottom:18px;
- width:115px;height:115px;border-radius:50%;
- background:#ffffff66;border:3px solid #fff9;z-index:25
-}
-#stick{
- position:absolute;width:48px;height:48px;
- left:31px;top:31px;border-radius:50%;
- background:#8c407b;border:3px solid white
+.startCard{
+    z-index:5;
+    width:min(90%,520px);
+    padding:35px 25px;
+    text-align:center;
+
+    background:rgba(13,21,45,.92);
+
+    border:2px solid rgba(255,218,135,.65);
+    border-radius:28px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.5);
 }
 
-#pick{
- position:absolute;right:25px;bottom:35px;
- width:85px;height:85px;border-radius:50%;
- background:#8c407b;color:white;
- border:4px solid white;font-weight:bold;
- z-index:25
+.logo{
+    font-size:clamp(38px,10vw,65px);
+    font-weight:900;
+    letter-spacing:3px;
+    color:#ffd477;
+
+    text-shadow:
+        0 5px 0 #79462c,
+        0 10px 22px #000;
 }
 
-#msg{
- position:absolute;left:50%;top:55%;
- transform:translate(-50%,-50%);
- background:#24172bdd;padding:12px 18px;
- border-radius:12px;z-index:40;
- display:none;text-align:center
+.subtitle{
+    margin-top:10px;
+    color:#f8e8c6;
+    font-size:18px;
 }
+
+.infoRow{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:25px 0;
+}
+
+.info{
+    background:#26375e;
+    color:#ffe4a2;
+    padding:12px 14px;
+    border-radius:14px;
+    font-weight:bold;
+}
+
+.primary{
+    padding:15px 35px;
+    border-radius:16px;
+
+    background:linear-gradient(
+        #ffd36c,
+        #ed8e38
+    );
+
+    color:#3b2116;
+    font-size:20px;
+    font-weight:900;
+
+    box-shadow:0 6px 0 #8b4628;
+}
+
+.primary:active{
+    transform:translateY(5px);
+    box-shadow:0 1px 0 #8b4628;
+}
+
+.hint{
+    margin-top:18px;
+    font-size:12px;
+    color:#cbd4e9;
+}
+
+
+/* ================= GAME SCREEN ================= */
+
+#gameScreen{
+    background:
+        linear-gradient(
+            to bottom,
+            #1a2a4c 0%,
+            #3d5775 54%,
+            #986043 55%,
+            #553528 100%
+        );
+}
+
+#gameScreen:after{
+    content:"";
+    position:absolute;
+    inset:auto 0 0 0;
+    height:45%;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.15) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            rgba(0,0,0,.12) 1px,
+            transparent 1px
+        );
+
+    background-size:54px 54px;
+}
+
+
+/* Towers */
+
+.tower{
+    position:absolute;
+    bottom:0;
+    width:13%;
+    height:48%;
+    background:#79503c;
+    opacity:.9;
+}
+
+.tower.left{
+    left:2%;
+}
+
+.tower.right{
+    right:2%;
+}
+
+
+/* ================= HUD ================= */
+
+.hud{
+    position:absolute;
+    z-index:20;
+
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+
+    width:min(94%,850px);
+
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+}
+
+.hudBox{
+    padding:7px;
+
+    text-align:center;
+
+    background:rgba(10,17,38,.9);
+
+    border:1px solid rgba(255,218,135,.5);
+    border-radius:13px;
+}
+
+.hudLabel{
+    font-size:10px;
+    text-transform:uppercase;
+    color:#abb8d1;
+}
+
+.hudValue{
+    margin-top:2px;
+    font-size:18px;
+    font-weight:900;
+    color:#ffe09a;
+}
+
+
+/* ================= DSA PANEL ================= */
+
+.panel{
+    position:absolute;
+    z-index:20;
+
+    top:100px;
+    right:12px;
+
+    width:195px;
+
+    padding:11px;
+
+    background:rgba(8,15,34,.9);
+
+    border:1px solid rgba(255,218,135,.5);
+    border-radius:16px;
+}
+
+.panel h3{
+    margin-bottom:8px;
+
+    color:#ffd77d;
+
+    font-size:12px;
+    text-transform:uppercase;
+}
+
+.dsaLine{
+    margin:6px 0;
+
+    font-size:11px;
+    color:#d8deed;
+}
+
+.dsaTag{
+    display:inline-block;
+
+    padding:3px 5px;
+
+    margin-right:4px;
+
+    border-radius:5px;
+
+    background:#2c416b;
+    color:#ffd77d;
+}
+
+
+/* ================= ARENA ================= */
+
+.arena{
+    position:absolute;
+    inset:0;
+    z-index:5;
+}
+
+
+/* ================= ARCHER ================= */
+
+.archer{
+    position:absolute;
+
+    bottom:18%;
+    left:12%;
+
+    width:100px;
+    height:150px;
+
+    z-index:8;
+
+    filter:drop-shadow(
+        0 10px 5px rgba(0,0,0,.35)
+    );
+}
+
+.archer .head{
+    position:absolute;
+
+    left:36px;
+    top:5px;
+
+    width:42px;
+    height:42px;
+
+    border-radius:50%;
+
+    background:#d99262;
+    border:3px solid #432a25;
+}
+
+.archer .hair{
+    position:absolute;
+
+    left:29px;
+    top:0;
+
+    width:55px;
+    height:48px;
+
+    border-radius:50%;
+
+    background:#34251f;
+}
+
+.archer .body{
+    position:absolute;
+
+    left:25px;
+    top:45px;
+
+    width:55px;
+    height:75px;
+
+    border-radius:20px 20px 12px 12px;
+
+    background:#ad5148;
+
+    border:3px solid #482c31;
+}
+
+.archer .arm{
+    position:absolute;
+
+    width:48px;
+    height:12px;
+
+    border-radius:10px;
+
+    background:#d99262;
+
+    top:58px;
+}
+
+.archer .a1{
+    left:58px;
+    transform:rotate(-22deg);
+}
+
+.archer .a2{
+    left:0;
+    transform:rotate(35deg);
+}
+
+.archer .bow{
+    position:absolute;
+
+    left:74px;
+    top:30px;
+
+    width:42px;
+    height:92px;
+
+    border:5px solid #9b6a35;
+    border-left:0;
+
+    border-radius:0 50% 50% 0;
+}
+
+.archer .string{
+    position:absolute;
+
+    left:74px;
+    top:31px;
+
+    width:45px;
+    height:91px;
+
+    border-left:2px solid #f4e3bd;
+}
+
+.archer .leg{
+    position:absolute;
+
+    top:115px;
+
+    width:15px;
+    height:38px;
+
+    background:#293451;
+
+    border-radius:10px;
+}
+
+.archer .l1{
+    left:31px;
+    transform:rotate(8deg);
+}
+
+.archer .l2{
+    left:58px;
+    transform:rotate(-8deg);
+}
+
+
+/* ================= TARGETS ================= */
+
+.target{
+    position:absolute;
+
+    width:92px;
+    height:92px;
+
+    border-radius:50%;
+
+    background:#f3e4b7;
+
+    border:6px solid #432a26;
+
+    box-shadow:
+        0 10px 20px rgba(0,0,0,.35);
+
+    z-index:7;
+
+    transition:.15s;
+}
+
+.target .ring1{
+    position:absolute;
+    inset:10px;
+
+    border-radius:50%;
+
+    background:#d85d47;
+}
+
+.target .ring2{
+    position:absolute;
+    inset:25px;
+
+    border-radius:50%;
+
+    background:#f4d36e;
+}
+
+.target .bull{
+    position:absolute;
+    inset:38px;
+
+    border-radius:50%;
+
+    background:#cf493b;
+
+    border:2px solid white;
+}
+
+.target.hit{
+    animation:targetHit .3s forwards;
+}
+
+@keyframes targetHit{
+    to{
+        transform:scale(1.35);
+        opacity:0;
+    }
+}
+
+.target.one{
+    left:40%;
+    top:30%;
+}
+
+.target.two{
+    left:65%;
+    top:22%;
+}
+
+.target.three{
+    left:75%;
+    top:52%;
+}
+
+
+/* ================= ARROW ================= */
+
+.arrow{
+    position:absolute;
+
+    width:75px;
+    height:5px;
+
+    background:#ead5a0;
+
+    border-radius:5px;
+
+    z-index:15;
+
+    transform-origin:left center;
+
+    box-shadow:0 0 5px white;
+}
+
+.arrow:after{
+    content:"";
+
+    position:absolute;
+    right:-10px;
+    top:-4px;
+
+    border-left:12px solid #ddd;
+    border-top:6px solid transparent;
+    border-bottom:6px solid transparent;
+}
+
+
+/* ================= SCORE POPUP ================= */
+
+.floatScore{
+    position:absolute;
+    z-index:30;
+
+    font-size:25px;
+    font-weight:900;
+
+    color:#ffe28d;
+
+    text-shadow:0 3px 5px black;
+
+    animation:scoreFloat .8s forwards;
+}
+
+@keyframes scoreFloat{
+    to{
+        transform:translateY(-50px);
+        opacity:0;
+    }
+}
+
+
+/* ================= CONTROLS ================= */
+
+.controls{
+    position:absolute;
+
+    z-index:25;
+
+    left:20px;
+    right:20px;
+    bottom:20px;
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items:flex-end;
+}
+
+.joystick{
+    width:105px;
+    height:105px;
+
+    border-radius:50%;
+
+    background:rgba(10,18,38,.55);
+
+    border:2px solid rgba(255,255,255,.25);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.stick{
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    background:rgba(255,209,111,.9);
+}
+
+.shoot{
+    width:105px;
+    height:105px;
+
+    border-radius:50%;
+
+    background:linear-gradient(
+        #ffce65,
+        #dd6e35
+    );
+
+    border:4px solid #ffe2a2;
+
+    color:#3c2018;
+
+    font-size:17px;
+    font-weight:900;
+
+    box-shadow:0 7px 0 #753722;
+}
+
+.shoot:active{
+    transform:translateY(5px);
+    box-shadow:0 2px 0 #753722;
+}
+
+.arrowCount{
+    position:absolute;
+
+    z-index:20;
+
+    left:25px;
+    bottom:135px;
+
+    color:#ffe09a;
+    font-weight:900;
+}
+
+
+/* ================= PAUSE ================= */
+
+.pauseBtn{
+    position:absolute;
+
+    z-index:30;
+
+    right:12px;
+    top:65px;
+
+    padding:7px 10px;
+
+    border-radius:9px;
+
+    background:#182747;
+
+    color:#ffe09a;
+
+    border:1px solid #826b42;
+}
+
+
+/* ================= OVERLAYS ================= */
+
+.overlay{
+    position:absolute;
+
+    inset:0;
+
+    z-index:100;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(4,8,20,.78);
+
+    backdrop-filter:blur(5px);
+}
+
+.overlay.show{
+    display:flex;
+}
+
+.modal{
+    width:min(90%,480px);
+
+    padding:25px;
+
+    text-align:center;
+
+    background:#121d3b;
+
+    border:2px solid #e6bd68;
+
+    border-radius:25px;
+
+    box-shadow:0 20px 70px #0009;
+}
+
+.modal h2{
+    color:#ffd477;
+    font-size:32px;
+}
+
+.resultGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    gap:8px;
+
+    margin:18px 0;
+}
+
+.result{
+    padding:10px;
+
+    border-radius:12px;
+
+    background:#26375e;
+}
+
+.result b{
+    display:block;
+
+    font-size:20px;
+
+    color:#ffe09a;
+}
+
+.result span{
+    font-size:11px;
+    color:#c5cee0;
+}
+
+.dsaExplain{
+    margin-bottom:15px;
+
+    padding:12px;
+
+    border-radius:14px;
+
+    background:#0c1530;
+
+    color:#d9dfeb;
+
+    font-size:12px;
+
+    line-height:1.55;
+
+    text-align:left;
+}
+
+
+/* ================= MOBILE ================= */
 
 @media(max-width:600px){
- #dsa{width:150px;font-size:9px}
- .card h1{font-size:32px}
+
+    .hud{
+        top:7px;
+        gap:4px;
+    }
+
+    .hudBox{
+        padding:5px 3px;
+    }
+
+    .hudLabel{
+        font-size:8px;
+    }
+
+    .hudValue{
+        font-size:14px;
+    }
+
+    .panel{
+        top:98px;
+        right:7px;
+        width:160px;
+    }
+
+    .panel h3{
+        font-size:10px;
+    }
+
+    .dsaLine{
+        font-size:9px;
+    }
+
+    .archer{
+        left:4%;
+        transform:scale(.82);
+        transform-origin:bottom left;
+    }
+
+    .target{
+        width:75px;
+        height:75px;
+    }
+
+    .target .ring1{
+        inset:8px;
+    }
+
+    .target .ring2{
+        inset:20px;
+    }
+
+    .target .bull{
+        inset:31px;
+    }
+
+    .controls{
+        bottom:12px;
+    }
+
+    .joystick,
+    .shoot{
+        width:88px;
+        height:88px;
+    }
+
+    .stick{
+        width:42px;
+        height:42px;
+    }
+
+    .arrowCount{
+        bottom:110px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div id="game">
+<!-- =====================================================
+     START SCREEN
+===================================================== -->
 
-<!-- START SCREEN -->
-<div id="start" class="screen">
- <div class="card">
-  <h1>🛍️ MALL RUSH</h1>
-  <h3>Complete your shopping before the mall closes!</h3>
+<section id="startScreen" class="screen active">
 
-  <p>⏱️ You have <b>2 minutes</b></p>
+    <div class="castle"></div>
 
-  <p>
-  👗 Find all 5 shopping items<br>
-  💰 Stay within your ₹500 budget<br>
-  🛒 Reach the checkout
-  </p>
+    <div class="startCard">
 
-  <p>
-  <b>DSA USED:</b><br>
-  ↩️ Stack = shopping history<br>
-  👥 Queue = checkout customers<br>
-  🔗 Linked List = shopping bag
-  </p>
+        <div class="logo">
+            ARCHERY RUSH
+        </div>
 
-  <p style="font-size:12px">
-  Move using the joystick. Tap PICK ITEM near an item.
-  Press <b>UNDO</b> to remove your latest shopping action.
-  </p>
+        <div class="subtitle">
+            Hit the targets, earn points, beat the clock!
+        </div>
 
-  <button class="start" onclick="startGame()">START SHOPPING 🛒</button>
- </div>
-</div>
+        <div class="infoRow">
 
+            <div class="info">
+                ⏱ 2 Minutes
+            </div>
 
-<!-- GAME OVER / WIN -->
-<div id="end" class="screen" style="display:none">
- <div class="card">
-  <h1 id="endTitle"></h1>
-  <p id="endText"></p>
-  <p id="endDSA"></p>
-  <button class="restart" onclick="startGame()">SHOP AGAIN 🔄</button>
- </div>
-</div>
+            <div class="info">
+                🏹 Score as high as you can
+            </div>
 
+            <div class="info">
+                ❤️ 3 Lives
+            </div>
 
-<!-- HUD -->
-<div id="hud">
- <div class="stat">⏱️<b id="time">2:00</b>TIME</div>
- <div class="stat">⭐<b id="score">0</b>SCORE</div>
- <div class="stat">🛍️<b id="count">0/5</b>BAG</div>
- <div class="stat">💰<b id="money">₹500</b>BUDGET</div>
-</div>
+        </div>
+
+        <button class="primary" id="startBtn">
+            START GAME
+        </button>
+
+        <div class="hint">
+            Aim for the bullseye for 100 points!
+        </div>
+
+    </div>
+
+</section>
 
 
-<!-- MALL -->
-<div id="world">
+<!-- =====================================================
+     GAME
+===================================================== -->
 
- <div class="shop fashion">
-  <span>👗</span>FASHION
- </div>
+<section id="gameScreen" class="screen">
 
- <div class="shop beauty">
-  <span>💄</span>BEAUTY
- </div>
-
- <div class="shop food">
-  <span>🍫</span>FOOD COURT
- </div>
-
- <div class="shop tech">
-  <span>🎧</span>TECH
- </div>
-
- <div class="shop checkout">
-  <span>🛒</span>CHECKOUT
- </div>
-
- <div id="player">🧍‍♀️</div>
-
-</div>
+    <div class="tower left"></div>
+    <div class="tower right"></div>
 
 
-<!-- DSA PANEL -->
-<div id="dsa">
- <strong>🧠 DSA STATUS</strong><br><br>
+    <!-- HUD -->
 
- <b>STACK</b><br>
- <span id="stack">[]</span><br><br>
+    <div class="hud">
 
- <b>QUEUE</b><br>
- <span id="queue">[A,B,C]</span><br><br>
+        <div class="hudBox">
+            <div class="hudLabel">Lives</div>
+            <div class="hudValue" id="lives">
+                ❤️❤️❤️
+            </div>
+        </div>
 
- <b>LINKED LIST</b><br>
- <span id="list">NULL</span>
-</div>
+        <div class="hudBox">
+            <div class="hudLabel">Time</div>
+            <div class="hudValue" id="time">
+                02:00
+            </div>
+        </div>
+
+        <div class="hudBox">
+            <div class="hudLabel">Score</div>
+            <div class="hudValue" id="score">
+                0
+            </div>
+        </div>
+
+        <div class="hudBox">
+            <div class="hudLabel">Bullseyes</div>
+            <div class="hudValue" id="bullseyes">
+                0
+            </div>
+        </div>
+
+    </div>
 
 
-<div id="msg"></div>
+    <!-- Pause -->
 
-<div id="joystick">
- <div id="stick"></div>
-</div>
+    <button class="pauseBtn" id="pauseBtn">
+        Ⅱ Pause
+    </button>
 
-<button id="pick" onclick="collect()">PICK<br>ITEM</button>
 
-</div>
+    <!-- DSA PANEL -->
+
+    <div class="panel">
+
+        <h3>
+            DSA Status
+        </h3>
+
+        <div class="dsaLine">
+            <span class="dsaTag">
+                STACK
+            </span>
+
+            <span id="stackView">
+                [↑ ↑ ↑]
+            </span>
+        </div>
+
+        <div class="dsaLine">
+            <span class="dsaTag">
+                QUEUE
+            </span>
+
+            <span id="queueView">
+                Target → Target
+            </span>
+        </div>
+
+        <div class="dsaLine">
+            <span class="dsaTag">
+                LINKED LIST
+            </span>
+
+            <span id="listView">
+                NULL
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- ARENA -->
+
+    <div class="arena" id="arena">
+
+        <!-- Archer -->
+
+        <div class="archer">
+
+            <div class="hair"></div>
+            <div class="head"></div>
+            <div class="body"></div>
+
+            <div class="arm a1"></div>
+            <div class="arm a2"></div>
+
+            <div class="bow"></div>
+            <div class="string"></div>
+
+            <div class="leg l1"></div>
+            <div class="leg l2"></div>
+
+        </div>
+
+
+        <!-- Target 1 -->
+
+        <div class="target one">
+
+            <div class="ring1"></div>
+            <div class="ring2"></div>
+            <div class="bull"></div>
+
+        </div>
+
+
+        <!-- Target 2 -->
+
+        <div class="target two">
+
+            <div class="ring1"></div>
+            <div class="ring2"></div>
+            <div class="bull"></div>
+
+        </div>
+
+
+        <!-- Target 3 -->
+
+        <div class="target three">
+
+            <div class="ring1"></div>
+            <div class="ring2"></div>
+            <div class="bull"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="arrowCount">
+        🏹 Arrows:
+        <span id="arrows">12</span>
+    </div>
+
+
+    <!-- CONTROLS -->
+
+    <div class="controls">
+
+        <div class="joystick" id="joystick">
+
+            <div class="stick"></div>
+
+        </div>
+
+
+        <button class="shoot" id="shootBtn">
+            🏹
+            <br>
+            SHOOT
+        </button>
+
+    </div>
+
+
+    <!-- PAUSE OVERLAY -->
+
+    <div class="overlay" id="pauseOverlay">
+
+        <div class="modal">
+
+            <h2>
+                PAUSED
+            </h2>
+
+            <p style="margin:15px 0 20px">
+                Take a breath, archer! 🎯
+            </p>
+
+            <button class="primary" id="resumeBtn">
+                RESUME
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- END SCREEN -->
+
+    <div class="overlay" id="endOverlay">
+
+        <div class="modal">
+
+            <h2 id="endTitle">
+                GAME COMPLETE!
+            </h2>
+
+
+            <div class="resultGrid">
+
+                <div class="result">
+
+                    <b id="finalScore">
+                        0
+                    </b>
+
+                    <span>
+                        FINAL SCORE
+                    </span>
+
+                </div>
+
+
+                <div class="result">
+
+                    <b id="finalBull">
+                        0
+                    </b>
+
+                    <span>
+                        BULLSEYES
+                    </span>
+
+                </div>
+
+
+                <div class="result">
+
+                    <b id="finalArrows">
+                        0
+                    </b>
+
+                    <span>
+                        ARROWS USED
+                    </span>
+
+                </div>
+
+
+                <div class="result">
+
+                    <b id="finalTime">
+                        0s
+                    </b>
+
+                    <span>
+                        TIME LEFT
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="dsaExplain">
+
+                <b>
+                    📚 DSA USED IN THE GAME
+                </b>
+
+                <br><br>
+
+                🏹 <b>Stack:</b>
+                arrows are pushed into the quiver
+                and popped when shooting (LIFO).
+
+                <br><br>
+
+                🎯 <b>Queue:</b>
+                targets enter the target queue
+                and are processed in FIFO order.
+
+                <br><br>
+
+                🔗 <b>Linked List:</b>
+                every successful hit is added
+                to the hit sequence.
+
+            </div>
+
+
+            <button class="primary" id="restartBtn">
+                PLAY AGAIN
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
 
 
 <script>
 
-/* =========================
+/* =====================================================
    STACK
-   LIFO = Last In First Out
-========================= */
+===================================================== */
 
 class Stack{
- constructor(){
-  this.data=[];
- }
 
- push(item){
-  this.data.push(item);
- }
+    constructor(){
+        this.items=[];
+    }
 
- pop(){
-  return this.data.pop();
- }
+    push(item){
+        this.items.push(item);
+    }
 
- peek(){
-  return this.data[this.data.length-1];
- }
+    pop(){
+        return this.items.pop();
+    }
+
+    peek(){
+        return this.items[this.items.length-1];
+    }
+
+    size(){
+        return this.items.length;
+    }
+
 }
 
 
-/* =========================
+/* =====================================================
    QUEUE
-   FIFO = First In First Out
-========================= */
+===================================================== */
 
 class Queue{
- constructor(items=[]){
-  this.data=[...items];
- }
 
- enqueue(item){
-  this.data.push(item);
- }
+    constructor(){
+        this.items=[];
+    }
 
- dequeue(){
-  return this.data.shift();
- }
+    enqueue(item){
+        this.items.push(item);
+    }
 
- front(){
-  return this.data[0];
- }
+    dequeue(){
+        return this.items.shift();
+    }
+
+    peek(){
+        return this.items[0];
+    }
+
+    size(){
+        return this.items.length;
+    }
+
 }
 
 
-/* =========================
+/* =====================================================
    LINKED LIST
-========================= */
+===================================================== */
 
 class Node{
- constructor(value){
-  this.value=value;
-  this.next=null;
- }
+
+    constructor(value){
+
+        this.value=value;
+        this.next=null;
+
+    }
+
 }
+
 
 class LinkedList{
 
- constructor(){
-  this.head=null;
- }
+    constructor(){
 
- add(value){
+        this.head=null;
+        this.tail=null;
+        this.length=0;
 
-  let newNode=new Node(value);
+    }
 
-  if(this.head===null){
-   this.head=newNode;
-   return;
-  }
 
-  let current=this.head;
+    append(value){
 
-  while(current.next!==null){
-   current=current.next;
-  }
+        const node=new Node(value);
 
-  current.next=newNode;
- }
+        if(this.head===null){
 
- remove(value){
+            this.head=node;
 
-  if(!this.head)return;
+        }else{
 
-  if(this.head.value===value){
-   this.head=this.head.next;
-   return;
-  }
+            this.tail.next=node;
 
-  let current=this.head;
+        }
 
-  while(current.next &&
-        current.next.value!==value){
-   current=current.next;
-  }
+        this.tail=node;
 
-  if(current.next){
-   current.next=current.next.next;
-  }
- }
+        this.length++;
 
- values(){
+    }
 
-  let result=[];
-  let current=this.head;
 
-  while(current){
-   result.push(current.value);
-   current=current.next;
-  }
+    values(){
 
-  return result;
- }
+        const result=[];
+
+        let current=this.head;
+
+        while(current!==null){
+
+            result.push(current.value);
+
+            current=current.next;
+
+        }
+
+        return result;
+
+    }
+
 }
 
 
-/* =========================
-   GAME DATA
-========================= */
-
-const products=[
-
- {
-  name:"T-Shirt",
-  emoji:"👗",
-  price:180,
-  x:14,y:22
- },
-
- {
-  name:"Lipstick",
-  emoji:"💄",
-  price:120,
-  x:77,y:22
- },
-
- {
-  name:"Chocolate",
-  emoji:"🍫",
-  price:80,
-  x:14,y:78
- },
-
- {
-  name:"Earphones",
-  emoji:"🎧",
-  price:120,
-  x:77,y:78
- },
-
- {
-  name:"Handbag",
-  emoji:"👜",
-  price:0,
-  x:50,y:49
- }
-
-];
-
-
-let stack;
-let queue;
-let bag;
-
-let timeLeft;
-let score;
-let money;
-
-let px;
-let py;
-
-let playing=false;
-let timer;
-
-let itemElements=[];
-
-
-/* =========================
-   START GAME
-========================= */
-
-function startGame(){
-
- document.getElementById("start").style.display="none";
- document.getElementById("end").style.display="none";
-
- stack=new Stack();
-
- queue=new Queue(["A","B","C"]);
-
- bag=new LinkedList();
-
- timeLeft=120;
- score=0;
- money=500;
-
- px=48;
- py=68;
-
- playing=true;
-
- document.getElementById("player").style.left=px+"%";
- document.getElementById("player").style.top=py+"%";
-
-
- /* Remove old items */
-
- document.querySelectorAll(".item").forEach(e=>e.remove());
-
- itemElements=[];
-
-
- /* Create shopping items */
-
- products.forEach((product,index)=>{
-
-  let item=document.createElement("div");
-
-  item.className="item";
-
-  item.textContent=product.emoji;
-
-  item.style.left=product.x+"%";
-  item.style.top=product.y+"%";
-
-  item.dataset.index=index;
-
-  document.getElementById("world").appendChild(item);
-
-  itemElements.push(item);
-
- });
-
-
- update();
-
- clearInterval(timer);
-
- timer=setInterval(tick,1000);
-
- showMessage("Find all 5 items! 🛍️");
-}
-
-
-/* =========================
-   TIMER
-========================= */
-
-function tick(){
-
- if(!playing)return;
-
- timeLeft--;
-
- update();
-
- if(timeLeft<=0){
-  gameOver();
- }
-}
-
-
-/* =========================
-   UPDATE DISPLAY
-========================= */
-
-function update(){
-
- let minutes=Math.floor(timeLeft/60);
-
- let seconds=timeLeft%60;
-
- document.getElementById("time").textContent=
- minutes+":"+(seconds<10?"0":"")+seconds;
-
- document.getElementById("score").textContent=score;
-
- document.getElementById("money").textContent="₹"+money;
-
- document.getElementById("count").textContent=
- bag.values().length+"/5";
-
- document.getElementById("stack").textContent=
- JSON.stringify(stack.data);
-
- document.getElementById("queue").textContent=
- "["+queue.data.join(",")+"]";
-
- document.getElementById("list").textContent=
- bag.values().join(" → ") || "NULL";
-}
-
-
-/* =========================
-   MESSAGE
-========================= */
-
-function showMessage(text){
-
- let box=document.getElementById("msg");
-
- box.textContent=text;
-
- box.style.display="block";
-
- clearTimeout(box.hideTimer);
-
- box.hideTimer=setTimeout(()=>{
-  box.style.display="none";
- },1800);
-}
-
-
-/* =========================
-   COLLECT ITEM
-========================= */
-
-function collect(){
-
- if(!playing)return;
-
- let found=-1;
-
- itemElements.forEach((element,index)=>{
-
-  if(element.style.display!=="none"){
-
-   let dx=px-products[index].x;
-   let dy=py-products[index].y;
-
-   let distance=Math.sqrt(dx*dx+dy*dy);
-
-   if(distance<10){
-    found=index;
-   }
-  }
-
- });
-
-
- if(found===-1){
-
-  showMessage("Move closer to an item! 👀");
-
-  return;
- }
-
-
- let product=products[found];
-
-
- if(product.price>money){
-
-  showMessage("Not enough budget! 💸");
-
-  return;
- }
-
-
- /* Linked List */
-
- bag.add(product.name);
-
-
- /* Stack */
-
- stack.push(product.name);
-
-
- money-=product.price;
-
- score+=100;
-
- itemElements[found].style.display="none";
-
- showMessage(product.name+" added to bag! 🛍️");
-
- update();
-}
-
-
-/* =========================
-   UNDO
-========================= */
-
-function undo(){
-
- if(!playing)return;
-
- if(stack.data.length===0){
-
-  showMessage("Nothing to undo!");
-
-  return;
- }
-
-
- /* POP = remove latest action */
-
- let removed=stack.pop();
-
- let index=products.findIndex(
-  product=>product.name===removed
- );
-
-
- if(index!==-1){
-
-  bag.remove(removed);
-
-  money+=products[index].price;
-
-  score=Math.max(0,score-100);
-
-  itemElements[index].style.display="flex";
-
-  showMessage("UNDO: "+removed+" ↩️");
- }
-
- update();
-}
-
-
-/* =========================
-   MOVEMENT
-========================= */
-
-function move(dx,dy){
-
- if(!playing)return;
-
- let length=Math.hypot(dx,dy);
-
- if(length===0)return;
-
- px+=dx/length*0.8;
-
- py+=dy/length*0.8;
-
- px=Math.max(3,Math.min(94,px));
-
- py=Math.max(5,Math.min(91,py));
-
- document.getElementById("player").style.left=px+"%";
-
- document.getElementById("player").style.top=py+"%";
-
-
- /* Check checkout */
-
- if(
-  bag.values().length===5 &&
-  Math.abs(px-50)<10 &&
-  Math.abs(py-49)<10
- ){
-
-  checkout();
- }
-}
-
-
-/* =========================
-   KEYBOARD SUPPORT
-========================= */
-
-let keys={};
-
-document.addEventListener("keydown",function(e){
-
- keys[e.key.toLowerCase()]=true;
-
- if(e.key.toLowerCase()==="z"){
-  undo();
- }
-
-});
-
-
-document.addEventListener("keyup",function(e){
-
- keys[e.key.toLowerCase()]=false;
-
-});
-
-
-setInterval(function(){
-
- if(!playing)return;
-
- let dx=0;
- let dy=0;
-
- if(keys["arrowleft"]||keys["a"])dx--;
-
- if(keys["arrowright"]||keys["d"])dx++;
-
- if(keys["arrowup"]||keys["w"])dy--;
-
- if(keys["arrowdown"]||keys["s"])dy++;
-
- move(dx,dy);
-
-},40);
-
-
-/* =========================
-   CHECKOUT
-========================= */
-
-function checkout(){
-
- if(bag.values().length<5){
-
-  showMessage(
-   "You still need "+
-   (5-bag.values().length)+
-   " item(s)! 🛍️"
-  );
-
-  return;
- }
-
-
- /* QUEUE DEQUEUE */
-
- let customer=queue.dequeue();
-
- score+=250;
-
- playing=false;
-
- clearInterval(timer);
-
-
- document.getElementById("endTitle").textContent=
- "🎉 SHOPPING COMPLETE!";
-
- document.getElementById("endText").innerHTML=
- "You completed your shopping!<br><br>"+
- "⭐ Score: <b>"+score+"</b><br>"+
- "💰 Money left: <b>₹"+money+"</b>";
-
- document.getElementById("endDSA").innerHTML=
- "🧠 <b>DSA Used:</b><br>"+
- "Stack → stored shopping actions<br>"+
- "Queue → customer "+customer+
- " served first (FIFO)<br>"+
- "Linked List → stored your shopping bag";
-
-
- document.getElementById("end").style.display="flex";
-}
-
-
-/* =========================
-   GAME OVER
-========================= */
-
-function gameOver(){
-
- playing=false;
-
- clearInterval(timer);
-
- document.getElementById("endTitle").textContent=
- "⏰ MALL CLOSED!";
-
- document.getElementById("endText").innerHTML=
- "Time's up!<br><br>"+
- "You collected <b>"+
- bag.values().length+
- "/5</b> items.";
-
- document.getElementById("endDSA").innerHTML=
- "Stack = shopping history<br>"+
- "Queue = checkout order<br>"+
- "Linked List = shopping bag";
-
- document.getElementById("end").style.display="flex";
-}
-
-
-/* =========================
-   MOBILE JOYSTICK
-========================= */
-
-let dragging=false;
-
-let joystick=document.getElementById("joystick");
-
-let stick=document.getElementById("stick");
-
-
-joystick.addEventListener(
- "pointerdown",
- function(e){
-
-  dragging=true;
-
-  joystick.setPointerCapture(e.pointerId);
-
-  joystickMove(e);
- }
-);
-
-
-joystick.addEventListener(
- "pointermove",
- function(e){
-
-  if(dragging){
-   joystickMove(e);
-  }
- }
-);
-
-
-joystick.addEventListener(
- "pointerup",
- function(){
-
-  dragging=false;
-
-  stick.style.left="31px";
-  stick.style.top="31px";
- }
-);
-
-
-function joystickMove(e){
-
- let rect=joystick.getBoundingClientRect();
-
- let centerX=rect.left+rect.width/2;
- let centerY=rect.top+rect.height/2;
-
- let dx=e.clientX-centerX;
- let dy=e.clientY-centerY;
-
- let distance=Math.hypot(dx,dy);
-
- if(distance>38){
-
-  dx=dx/distance*38;
-  dy=dy/distance*38;
- }
-
-
- stick.style.left=(31+dx)+"px";
- stick.style.top=(31+dy)+"px";
-
- move(dx,dy);
-}
-
-
-/* Keyboard shortcut:
-   Z = UNDO
-*/
-
-</script>
-
-</body>
-</html> 
+/* =====================================================
+   GAM
