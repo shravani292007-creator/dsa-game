@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escape the Dungeon — DSA Game</title>
+<style>
+:root{--bg:#0f172a;--card:#172033;--card2:#1e293b;--text:#f8fafc;--muted:#a8b3c7;--accent:#8b5cf6;--border:#334155}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0f172a,#1e1b4b);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);padding:20px}
+#game{max-width:900px;margin:auto}.hero{text-align:center;padding:10px 0 20px}h1{font-size:32px;margin:0 0 6px}.muted{color:var(--muted);font-size:14px}
+.panel{background:rgba(23,32,51,.94);border:1px solid var(--border);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 12px 35px rgba(0,0,0,.2)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.stat{background:var(--card2);border-radius:12px;padding:12px;text-align:center}.stat b{display:block;font-size:23px;margin-top:3px}
+.room{border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;background:#111827;min-height:180px;display:flex;flex-direction:column;justify-content:center;gap:8px}.scene{font-size:58px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}button{border:1px solid var(--border);background:var(--card2);color:var(--text);border-radius:11px;padding:11px 14px;font-weight:700;cursor:pointer;min-height:44px}button:hover{background:#312e81}button.primary{background:var(--accent);border-color:var(--accent)}
+.log{font-size:13px;color:var(--muted);margin-top:9px;min-height:20px}.lists{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.box{border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--card2);min-width:0}.box h3{font-size:14px;margin:0 0 7px}.nodes{font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.explain h2{font-size:20px;margin:0 0 10px}.explain h3{font-size:15px;margin:16px 0 6px}.pill{display:inline-block;border:1px solid #475569;border-radius:999px;padding:3px 8px;font-size:12px;margin:2px;color:#ddd}.win{font-weight:800;font-size:20px}
+@media(max-width:600px){body{padding:12px}h1{font-size:27px}.lists{grid-template-columns:1fr}.stats{gap:6px}.stat{padding:9px 4px}}
+</style>
+</head>
+<body>
+<div id="game">
+<div class="hero">
+<h1>🏰 Escape the Dungeon</h1>
+<div class="muted">A DSA Mini-Game using Stack, Queue & Linked List</div>
+</div>
+
+<div class="panel">
+<div class="stats">
+<div class="stat">❤️ Lives<b id="lives">3</b></div>
+<div class="stat">⭐ Score<b id="score">0</b></div>
+<div class="stat">🚪 Rooms<b id="rooms">0/5</b></div>
+</div>
+
+<div class="room">
+<div class="scene" id="scene">🗝️</div>
+<strong id="message">Find the key and escape the dungeon!</strong>
+<div class="muted" id="submessage">Explore the room, collect items, and defeat enemies.</div>
+</div>
+
+<div class="actions">
+<button class="primary" id="explore">🔎 Explore</button>
+<button id="collect">🎒 Collect Item</button>
+<button id="attack">⚔️ Attack Enemy</button>
+<button id="undo">↩️ Undo Last Action</button>
+<button id="next">➡️ Next Room</button>
+<button id="reset">🔄 Restart</button>
+</div>
+<div class="log" id="log">Game ready.</div>
+</div>
+
+<div class="panel">
+<strong>🧠 Live DSA Structures</strong>
+<div class="lists">
+<div class="box"><h3>📚 Stack (LIFO)</h3><div class="nodes" id="stackView">Empty</div></div>
+<div class="box"><h3>👾 Queue (FIFO)</h3><div class="nodes" id="queueView">Empty</div></div>
+<div class="box"><h3>🎒 Linked List</h3><div class="nodes" id="listView">NULL</div></div>
+</div>
+</div>
+
+<div class="panel explain">
+<h2>📖 How DSA is Used in This Game</h2>
+
+<h3>📚 1. Stack — LIFO (Last In, First Out)</h3>
+<p class="muted">The Stack stores the player's actions. Whenever an action is performed, it is <b>pushed</b> onto the stack. When <b>Undo</b> is selected, the most recent action is <b>popped</b> first. This demonstrates LIFO.</p>
+<span class="pill">push()</span><span class="pill">pop()</span><span class="pill">Top = latest action</span>
+
+<h3>👾 2. Queue — FIFO (First In, First Out)</h3>
+<p class="muted">Enemies are placed into a Queue as they appear. The enemy at the <b>front</b> is attacked first and removed using <b>dequeue</b>. New enemies are added at the <b>rear</b>. This demonstrates FIFO.</p>
+<span class="pill">enqueue()</span><span class="pill">dequeue()</span><span class="pill">Front → first enemy</span>
+
+<h3>🎒 3. Linked List</h3>
+<p class="muted">Collected items are stored as nodes in a Linked List. Each node contains an item and a link to the next node. Items can be added dynamically without requiring a fixed-size array.</p>
+<span class="pill">Node</span><span class="pill">next pointer</span><span class="pill">NULL = end</span>
+</div>
+</div>
+
+<script>
+class Stack{
+ constructor(){this.a=[]}
+ push(x){this.a.push(x)}
+ pop(){return this.a.pop()}
+}
+class Queue{
+ constructor(){this.a=[]}
+ enqueue(x){this.a.push(x)}
+ dequeue(){return this.a.shift()}
+}
+class Node{
+ constructor(v){this.value=v;this.next=null}
+}
+class LinkedList{
+ constructor(){this.head=null}
+ add(v){
+  const n=new Node(v);
+  if(!this.head)this.head=n;
+  else{let c=this.head;while(c.next)c=c.next;c.next=n}
+ }
+ removeLast(){
+  if(!this.head)return null;
+  if(!this.head.next){const v=this.head.value;this.head=null;return v}
+  let c=this.head;
+  while(c.next.next)c=c.next;
+  const v=c.next.value;c.next=null;return v
+ }
+ values(){
+  let r=[],c=this.head;
+  while(c){r.push(c.value);c=c.next}
+  return r
+ }
+}
+
+const stack=new Stack(), queue=new Queue(), inventory=new LinkedList();
+let score=0,room=0,gameOver=false;
+const itemPool=['🗝️ Golden Key','🧪 Potion','🪙 Coin','💎 Gem','🛡️ Shield'];
+const enemyPool=['👹 Goblin','🧟 Zombie','🐺 Shadow Wolf'];
+
+const $=id=>document.getElementById(id);
+
+function render(){
+ $('score').textContent=score;
+ $('rooms').textContent=room+'/5';
+ $('stackView').textContent=stack.a.length?stack.a.slice().reverse().join(' → ')+' ← Top':'Empty';
+ $('queueView').textContent=queue.a.length?'Front → '+queue.a.join(' → ')+' → Rear':'Empty';
+ const vals=inventory.values();
+ $('listView').textContent=vals.length?vals.join(' → ')+' → NULL':'NULL';
+}
+
+function act(name){
+ if(gameOver)return;
+ stack.push(name);
+ render();
+ $('log').textContent='Stack push: '+name;
+}
+
+function explore(){
+ act('Explore');
+ if(Math.random()<0.6){
+  const e=enemyPool[Math.floor(Math.random()*enemyPool.length)];
+  queue.enqueue(e);
+  $('scene').textContent='👾';
+  $('message').textContent=e+' joined the enemy queue!';
+  $('submessage').textContent='Attack the front enemy to dequeue it.';
+  $('log').textContent='Queue enqueue: '+e;
+ }else{
+  $('scene').textContent='🎁';
+  $('message').textContent='You discovered an item!';
+  $('submessage').textContent='Collect it to add a node to the inventory.';
+ }
+ render();
+}
+
+function collect(){
+ if(gameOver)return;
+ const item=itemPool[inventory.values().length%itemPool.length];
+ inventory.add(item);
+ score+=10;
+ act('Collect');
+ $('scene').textContent='🎒';
+ $('message').textContent='Collected '+item;
+ $('submessage').textContent='A new node was added to the Linked List.';
+ render();
+}
+
+function attack(){
+ if(gameOver)return;
+ if(!queue.a.length){
+  $('message').textContent='No enemy is waiting!';
+  $('submessage').textContent='Explore to add enemies to the queue.';
+  return;
+ }
+ const e=queue.dequeue();
+ score+=20;
+ act('Attack '+e);
+ $('scene').textContent='💥';
+ $('message').textContent=e+' defeated!';
+ $('submessage').textContent='It was removed from the front of the Queue.';
+ $('log').textContent='Queue dequeue: '+e;
+ render();
+}
+
+function undo(){
+ if(gameOver)return;
+ const x=stack.pop();
+ if(!x){
+  $('log').textContent='Stack is empty — nothing to undo.';
+  return;
+ }
+ if(x.startsWith('Attack'))score=Math.max(0,score-20);
+ if(x==='Collect'){inventory.removeLast();score=Math.max(0,score-10)}
+ $('message').textContent='Undid: '+x;
+ $('submessage').textContent='The last action was popped from the Stack.';
+ $('log').textContent='Stack pop: '+x;
+ render();
+}
+
+function nextRoom(){
+ if(gameOver)return;
+ if(room>=5){win();return}
+ if(!inventory.values().length){
+  $('message').textContent='You need at least one item!';
+  $('submessage').textContent='Explore and collect an item before moving on.';
+  return;
+ }
+ room++;
+ act('Next Room');
+ $('scene').textContent=room===5?'🚪':'🗺️';
+ $('message').textContent=room===5?'The exit is here! 🎉':'Room '+room+' unlocked!';
+ $('submessage').textContent=room===5?'Press Escape to finish the game.':'Explore this room for more items and enemies.';
+ $('next').textContent=room===5?'🏆 Escape!':'➡️ Next Room';
+ render();
+}
+
+function win(){
+ if(gameOver)return;
+ gameOver=true;
+ score+=50;
+ $('scene').textContent='🏆';
+ $('message').innerHTML='<span class="win">YOU ESCAPED! 🎉</span>';
+ $('submessage').textContent='Final score: '+score+' — You used Stack, Queue and Linked List.';
+ $('log').textContent='Game completed!';
+ render();
+}
+
+function reset(){
+ score=0;room=0;gameOver=false;
+ stack.a=[];queue.a=[];inventory.head=null;
+ $('next').textContent='➡️ Next Room';
+ $('scene').textContent='🗝️';
+ $('message').textContent='Find the key and escape the dungeon!';
+ $('submessage').textContent='Explore the room, collect items, and defeat enemies.';
+ $('log').textContent='Game restarted.';
+ render();
+}
+
+$('explore').onclick=explore;
+$('collect').onclick=collect;
+$('attack').onclick=attack;
+$('undo').onclick=undo;
+$('next').onclick=nextRoom;
+$('reset').onclick=reset;
+render();
+</script>
+</body>
+</html>
