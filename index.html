@@ -1,1113 +1,555 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Archery Rush - DSA Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bubble Shooter - DSA Game</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-
-body{
-    font-family:Arial,sans-serif;
-    background:#101827;
-    color:white;
-    overflow:hidden;
+* {
+  box-sizing: border-box;
 }
 
-.hidden{display:none!important}
-
-.screen{
-    width:100vw;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#17153b,#35205f);
+  color: white;
+  text-align: center;
 }
 
-/* START */
-
-#startScreen{
-    background:linear-gradient(135deg,#18243d,#51351e);
-    text-align:center;
-    padding:20px;
+h1 {
+  margin: 15px 0 5px;
 }
 
-.startBox{
-    width:min(92%,500px);
-    background:rgba(12,18,32,.95);
-    border:2px solid #e0ad48;
-    border-radius:25px;
-    padding:35px 20px;
-    box-shadow:0 0 35px rgba(224,173,72,.3);
+#game {
+  width: 95%;
+  max-width: 500px;
+  margin: auto;
 }
 
-.logo{font-size:55px}
-
-h1{
-    color:#f3c45c;
-    font-size:42px;
-    letter-spacing:2px;
-    margin:8px 0;
+#stats {
+  display: flex;
+  justify-content: space-around;
+  background: #24204a;
+  padding: 10px;
+  border-radius: 12px;
+  margin: 10px 0;
+  font-weight: bold;
 }
 
-.subtitle{
-    color:#ddd;
-    margin:10px 0 25px;
+#board {
+  position: relative;
+  height: 430px;
+  background: #10152f;
+  border: 3px solid #8d7aff;
+  border-radius: 15px;
+  overflow: hidden;
+  touch-action: none;
 }
 
-.info{
-    display:flex;
-    justify-content:space-around;
-    margin:20px 0 30px;
+.bubble {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.6);
+  box-shadow: 0 3px 8px #000;
 }
 
-.info b{
-    display:block;
-    color:#f3c45c;
-    font-size:24px;
-    margin-bottom:4px;
+.red { background:#ff4d6d; }
+.blue { background:#4da6ff; }
+.green { background:#49d17d; }
+.yellow { background:#ffd447; }
+.purple { background:#b56cff; }
+
+#shooter {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 4px solid white;
 }
 
-.startBtn{
-    background:#d99d35;
-    color:#171717;
-    font-size:19px;
-    font-weight:bold;
-    padding:15px 40px;
-    border:0;
-    border-radius:30px;
-    box-shadow:0 5px 0 #805717;
+#aim {
+  position: absolute;
+  bottom: 58px;
+  left: 50%;
+  width: 4px;
+  height: 90px;
+  background: white;
+  transform-origin: bottom;
+  transform: translateX(-50%) rotate(0deg);
 }
 
-.startBtn:active{
-    transform:translateY(4px);
-    box-shadow:none;
+button {
+  border: none;
+  padding: 12px 18px;
+  margin: 6px;
+  border-radius: 10px;
+  background: #8d7aff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-/* GAME */
-
-#gameScreen{
-    position:relative;
-    background:
-    radial-gradient(circle at 55% 35%,#806039,#34291d 55%,#151515);
+button:hover {
+  background: #a99cff;
 }
 
-.castle{
-    position:absolute;
-    inset:0;
-    opacity:.4;
+#message {
+  min-height: 25px;
+  font-weight: bold;
 }
 
-.tower{
-    position:absolute;
-    bottom:0;
-    width:85px;
-    height:58%;
-    background:#49443d;
-    border:4px solid #292724;
+#dsa {
+  margin-top: 12px;
+  background: #24204a;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
 }
 
-.tower.left{left:0}
-.tower.right{right:0}
-
-.wall{
-    position:absolute;
-    left:8%;
-    right:8%;
-    bottom:0;
-    height:27%;
-    background:#514c44;
-    border-top:5px solid #292724;
+#dsa h3 {
+  text-align: center;
+  margin: 5px;
 }
 
-/* HUD */
-
-.hud{
-    position:absolute;
-    top:10px;
-    left:8px;
-    right:8px;
-    display:flex;
-    justify-content:space-between;
-    gap:5px;
-    z-index:20;
+#startScreen {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,10,30,.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
-.stat{
-    background:rgba(10,15,25,.9);
-    border:1px solid #d9a644;
-    border-radius:11px;
-    padding:7px 10px;
-    text-align:center;
-    min-width:65px;
+#startScreen h2 {
+  font-size: 30px;
 }
 
-.stat small{
-    display:block;
-    font-size:9px;
-    color:#aaa;
+.hidden {
+  display: none !important;
 }
 
-.stat strong{
-    color:#f5c45d;
-    font-size:18px;
-}
-
-/* DSA */
-
-.dsaPanel{
-    position:absolute;
-    top:70px;
-    left:8px;
-    width:215px;
-    background:rgba(8,13,24,.9);
-    border:1px solid #555;
-    border-radius:12px;
-    padding:9px;
-    z-index:15;
-    font-size:11px;
-}
-
-.dsaPanel h3{
-    color:#f3c45d;
-    margin-bottom:5px;
-}
-
-.dsaRow{
-    margin:5px 0;
-}
-
-.dsaRow span{
-    color:#8de5ff;
-}
-
-/* ARCHER */
-
-.archer{
-    position:absolute;
-    left:14%;
-    bottom:25%;
-    width:100px;
-    height:145px;
-    z-index:10;
-}
-
-.head{
-    position:absolute;
-    left:34px;
-    top:0;
-    width:30px;
-    height:30px;
-    border-radius:50%;
-    background:#d99b70;
-}
-
-.hair{
-    position:absolute;
-    left:30px;
-    top:-3px;
-    width:38px;
-    height:20px;
-    border-radius:50% 50% 20% 20%;
-    background:#241b17;
-}
-
-.body{
-    position:absolute;
-    left:28px;
-    top:29px;
-    width:42px;
-    height:62px;
-    background:#75472c;
-    border-radius:13px;
-}
-
-.arm{
-    position:absolute;
-    left:4px;
-    top:42px;
-    width:60px;
-    height:9px;
-    background:#d99b70;
-    transform:rotate(-15deg);
-    border-radius:5px;
-}
-
-.leg{
-    position:absolute;
-    top:86px;
-    width:13px;
-    height:55px;
-    background:#29211c;
-    border-radius:6px;
-}
-
-.leg1{left:30px;transform:rotate(7deg)}
-.leg2{left:53px;transform:rotate(-7deg)}
-
-.bow{
-    position:absolute;
-    left:63px;
-    top:25px;
-    width:38px;
-    height:75px;
-    border-right:5px solid #d0a044;
-    border-radius:50%;
-}
-
-.string{
-    position:absolute;
-    left:65px;
-    top:28px;
-    height:70px;
-    border-left:1px solid #eee;
-    transform:rotate(2deg);
-}
-
-/* QUIVER */
-
-.quiver{
-    position:absolute;
-    left:7%;
-    bottom:25%;
-    width:35px;
-    height:90px;
-    background:#58321f;
-    border:3px solid #d19b42;
-    border-radius:5px 5px 15px 15px;
-    transform:rotate(-10deg);
-    z-index:9;
-}
-
-.arrowStack{
-    position:absolute;
-    left:5px;
-    bottom:76px;
-    width:3px;
-    height:80px;
-    background:#eee;
-    box-shadow:
-    7px 2px 0 #eee,
-    14px 4px 0 #eee,
-    21px 1px 0 #eee,
-    28px 5px 0 #eee;
-}
-
-.arrowStack:before{
-    content:"";
-    position:absolute;
-    top:-7px;
-    left:-4px;
-    border-left:5px solid transparent;
-    border-right:5px solid transparent;
-    border-bottom:9px solid #d9a443;
-}
-
-/* TARGET */
-
-.target{
-    position:absolute;
-    width:105px;
-    height:105px;
-    border-radius:50%;
-    background:#f1eee7;
-    border:7px solid #292929;
-    z-index:8;
-    box-shadow:0 7px 15px rgba(0,0,0,.5);
-}
-
-.target:before{
-    content:"";
-    position:absolute;
-    inset:13px;
-    border-radius:50%;
-    background:#d94b43;
-}
-
-.target:after{
-    content:"";
-    position:absolute;
-    inset:31px;
-    border-radius:50%;
-    background:#f3c54f;
-}
-
-.bull{
-    position:absolute;
-    inset:43px;
-    border-radius:50%;
-    background:#d83d37;
-    z-index:2;
-}
-
-.t1{right:13%;top:28%}
-.t2{right:32%;top:52%}
-.t3{right:39%;top:22%}
-
-/* FLYING ARROW */
-
-.flyingArrow{
-    position:absolute;
-    width:65px;
-    height:4px;
-    background:#e9e9e9;
-    border-radius:5px;
-    z-index:50;
-    pointer-events:none;
-    transform-origin:left center;
-}
-
-.flyingArrow:after{
-    content:"";
-    position:absolute;
-    right:-2px;
-    top:-4px;
-    border-left:12px solid #d6a33e;
-    border-top:6px solid transparent;
-    border-bottom:6px solid transparent;
-}
-
-/* CONTROLS */
-
-.controls{
-    position:absolute;
-    bottom:20px;
-    left:20px;
-    right:20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    z-index:30;
-}
-
-.joystick{
-    width:78px;
-    height:78px;
-    border-radius:50%;
-    background:rgba(255,255,255,.13);
-    border:2px solid rgba(255,255,255,.3);
-}
-
-.joystick:after{
-    content:"";
-    display:block;
-    width:34px;
-    height:34px;
-    margin:20px;
-    border-radius:50%;
-    background:#bbb;
-}
-
-.shootBtn{
-    width:88px;
-    height:88px;
-    border-radius:50%;
-    background:#d64b3f;
-    border:4px solid #f1c45b;
-    color:white;
-    font-weight:bold;
-    font-size:16px;
-}
-
-.shootBtn:active{
-    transform:scale(.93);
-}
-
-.pauseBtn{
-    position:absolute;
-    top:70px;
-    right:8px;
-    background:#333;
-    color:white;
-    padding:8px 12px;
-    border-radius:9px;
-    z-index:25;
-}
-
-.message{
-    position:absolute;
-    top:45%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    color:#f6c65b;
-    font-size:28px;
-    font-weight:bold;
-    z-index:60;
-    pointer-events:none;
-    text-shadow:0 2px 5px #000;
-}
-
-/* END */
-
-#endScreen{
-    background:#101827;
-    padding:20px;
-}
-
-.endBox{
-    width:min(92%,500px);
-    background:#182235;
-    border:2px solid #d9a644;
-    border-radius:22px;
-    padding:28px 18px;
-    text-align:center;
-}
-
-.endBox h2{
-    color:#f3c45d;
-    margin-bottom:20px;
-}
-
-.results{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-bottom:18px;
-}
-
-.result{
-    background:#101827;
-    border-radius:10px;
-    padding:12px;
-}
-
-.result span{
-    display:block;
-    font-size:11px;
-    color:#aaa;
-}
-
-.result b{
-    color:#f5c45d;
-    font-size:23px;
-}
-
-.explain{
-    background:#101827;
-    padding:13px;
-    border-radius:10px;
-    text-align:left;
-    font-size:12px;
-    line-height:1.5;
-    margin-bottom:18px;
-}
-
-.explain h3{
-    color:#f3c45d;
-    margin-bottom:7px;
-}
-
-.explain p{
-    margin:5px 0;
+#history {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #ddd;
 }
 </style>
 </head>
 
 <body>
 
-<!-- START -->
-<div id="startScreen" class="screen">
+<div id="game">
 
-<div class="startBox">
+<h1>🫧 BUBBLE SHOOTER</h1>
+<p>Match 3 bubbles and use DSA!</p>
 
-<div class="logo">🏹</div>
+<div id="stats">
+  <span>⭐ Score: <b id="score">0</b></span>
+  <span>⏱️ <b id="time">60</b></span>
+  <span>❤️ <b id="lives">3</b></span>
+</div>
 
-<h1>ARCHERY RUSH</h1>
+<div id="board">
 
-<p class="subtitle">
-Hit the targets, earn points, beat the clock!
+  <div id="startScreen">
+    <h2>🫧 Bubble Shooter</h2>
+    <p>Match 3 bubbles!</p>
+    <p>Stack • Queue • Linked List</p>
+    <button onclick="startGame()">START GAME</button>
+  </div>
+
+  <div id="aim"></div>
+  <div id="shooter"></div>
+
+</div>
+
+<div>
+  <button onclick="shoot()">🎯 SHOOT</button>
+  <button onclick="undoShot()">↩️ UNDO</button>
+  <button onclick="restartGame()">🔄 RESTART</button>
+</div>
+
+<div id="message">Press START GAME!</div>
+
+<div id="history">
+  🫧 Shot Stack: <span id="stackView">Empty</span><br>
+  🚶 Bubble Queue: <span id="queueView">Waiting...</span><br>
+  🔗 Linked List: <span id="listView">NULL</span>
+</div>
+
+<div id="dsa">
+<h3>📚 DSA USED IN THIS GAME</h3>
+
+<p>
+<b>📚 STACK — LIFO:</b><br>
+Every shot is pushed into the Stack.
+The latest shot can be removed first using Undo.
 </p>
 
-<div class="info">
-<div><b>⏱️ 2</b>Minutes</div>
-<div><b>❤️ 3</b>Lives</div>
-<div><b>🎯 ∞</b>Targets</div>
-</div>
+<p>
+<b>🚶 QUEUE — FIFO:</b><br>
+Upcoming bubbles wait in a Queue.
+The first bubble in the Queue is used first.
+</p>
 
-<button class="startBtn" id="startBtn">
-START GAME
-</button>
-
-</div>
-</div>
-
-
-<!-- GAME -->
-<div id="gameScreen" class="screen hidden">
-
-<div class="castle">
-<div class="tower left"></div>
-<div class="tower right"></div>
-<div class="wall"></div>
-</div>
-
-<div class="hud">
-
-<div class="stat">
-<small>❤️ LIVES</small>
-<strong id="lives">3</strong>
-</div>
-
-<div class="stat">
-<small>⏱️ TIME</small>
-<strong id="time">120</strong>
-</div>
-
-<div class="stat">
-<small>⭐ SCORE</small>
-<strong id="score">0</strong>
-</div>
-
-<div class="stat">
-<small>🎯 BULL</small>
-<strong id="bullseyes">0</strong>
+<p>
+<b>🔗 LINKED LIST:</b><br>
+Every bubble popped is added to the Linked List,
+creating a history of popped bubbles.
+</p>
 </div>
 
 </div>
-
-
-<div class="dsaPanel">
-
-<h3>⚙️ DSA STATUS</h3>
-
-<div class="dsaRow">
-Stack: <span id="stackStatus">12 arrows</span>
-</div>
-
-<div class="dsaRow">
-Queue: <span id="queueStatus">3 targets</span>
-</div>
-
-<div class="dsaRow">
-Linked List: <span id="listStatus">Empty</span>
-</div>
-
-</div>
-
-
-<button class="pauseBtn" id="pauseBtn">
-⏸ Pause
-</button>
-
-
-<!-- ARCHER -->
-
-<div class="quiver">
-<div class="arrowStack" id="arrowVisual"></div>
-</div>
-
-<div class="archer">
-
-<div class="hair"></div>
-<div class="head"></div>
-<div class="body"></div>
-<div class="arm"></div>
-<div class="bow"></div>
-<div class="string"></div>
-<div class="leg leg1"></div>
-<div class="leg leg2"></div>
-
-</div>
-
-
-<!-- TARGETS -->
-
-<div class="target t1" data-points="100">
-<div class="bull"></div>
-</div>
-
-<div class="target t2" data-points="50">
-<div class="bull"></div>
-</div>
-
-<div class="target t3" data-points="20">
-<div class="bull"></div>
-</div>
-
-
-<div class="message" id="message"></div>
-
-
-<div class="controls">
-
-<div class="joystick"></div>
-
-<button class="shootBtn" id="shootBtn">
-🏹<br>SHOOT
-</button>
-
-</div>
-
-</div>
-
-
-<!-- END -->
-
-<div id="endScreen" class="screen hidden">
-
-<div class="endBox">
-
-<h2>🏆 GAME COMPLETE!</h2>
-
-<div class="results">
-
-<div class="result">
-<span>FINAL SCORE</span>
-<b id="finalScore">0</b>
-</div>
-
-<div class="result">
-<span>BULLSEYES</span>
-<b id="finalBull">0</b>
-</div>
-
-<div class="result">
-<span>ARROWS USED</span>
-<b id="finalArrows">0</b>
-</div>
-
-<div class="result">
-<span>TIME LEFT</span>
-<b id="finalTime">0</b>
-</div>
-
-</div>
-
-<div class="explain">
-
-<h3>📚 DSA USED</h3>
-
-<p><b>Stack:</b> Arrows use LIFO — the last arrow added is used first.</p>
-
-<p><b>Queue:</b> Targets use FIFO — the first target added is processed first.</p>
-
-<p><b>Linked List:</b> Every hit is stored as a node in the hit sequence.</p>
-
-</div>
-
-<button class="startBtn" id="againBtn">
-PLAY AGAIN
-</button>
-
-</div>
-</div>
-
 
 <script>
 
-class Stack{
-constructor(){this.items=[]}
-push(x){this.items.push(x)}
-pop(){return this.items.pop()}
-size(){return this.items.length}
+/* =========================
+   DSA STRUCTURES
+========================= */
+
+// STACK
+let shotStack = [];
+
+function pushShot(color) {
+  shotStack.push(color);
 }
 
-class Queue{
-constructor(){this.items=[]}
-enqueue(x){this.items.push(x)}
-dequeue(){return this.items.shift()}
-size(){return this.items.length}
+// QUEUE
+let bubbleQueue = [];
+
+function enqueue(color) {
+  bubbleQueue.push(color);
 }
 
-class Node{
-constructor(data){
-this.data=data;
-this.next=null;
-}
+function dequeue() {
+  return bubbleQueue.shift();
 }
 
-class LinkedList{
-constructor(){
-this.head=null;
-this.tail=null;
-}
-append(data){
-let n=new Node(data);
-
-if(!this.head){
-this.head=n;
-this.tail=n;
-}else{
-this.tail.next=n;
-this.tail=n;
-}
-}
-values(){
-let arr=[];
-let cur=this.head;
-
-while(cur){
-arr.push(cur.data);
-cur=cur.next;
+// LINKED LIST
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
 }
 
-return arr;
-}
+let head = null;
+
+function addToLinkedList(value) {
+  let newNode = new Node(value);
+
+  if (head === null) {
+    head = newNode;
+    return;
+  }
+
+  let current = head;
+
+  while (current.next !== null) {
+    current = current.next;
+  }
+
+  current.next = newNode;
 }
 
 
-/* VARIABLES */
+/* =========================
+   GAME VARIABLES
+========================= */
 
-let stack;
-let queue;
-let hits;
+let score = 0;
+let lives = 3;
+let time = 60;
+let playing = false;
+let timer;
 
-let score=0;
-let lives=3;
-let time=120;
-let bulls=0;
-let arrowsUsed=0;
+let colors = [
+  "red",
+  "blue",
+  "green",
+  "yellow",
+  "purple"
+];
 
-let timer=null;
-let running=false;
-let paused=false;
+let board = document.getElementById("board");
 
-
-/* ELEMENTS */
-
-const startScreen=document.getElementById("startScreen");
-const gameScreen=document.getElementById("gameScreen");
-const endScreen=document.getElementById("endScreen");
-
-const startBtn=document.getElementById("startBtn");
-const shootBtn=document.getElementById("shootBtn");
-const againBtn=document.getElementById("againBtn");
-const pauseBtn=document.getElementById("pauseBtn");
-
-const message=document.getElementById("message");
-
-const targets=document.querySelectorAll(".target");
+let bubbles = [];
 
 
-/* START */
+/* =========================
+   START GAME
+========================= */
 
-startBtn.onclick=function(){
-startGame();
-};
+function startGame() {
 
-againBtn.onclick=function(){
-startGame();
-};
+  document.getElementById("startScreen")
+    .classList.add("hidden");
 
+  score = 0;
+  lives = 3;
+  time = 60;
 
-/* GAME START */
+  shotStack = [];
+  bubbleQueue = [];
+  head = null;
 
-function startGame(){
+  playing = true;
 
-clearInterval(timer);
+  createBubbles();
 
-stack=new Stack();
-queue=new Queue();
-hits=new LinkedList();
+  // Create Queue
+  for (let i = 0; i < 5; i++) {
+    enqueue(randomColor());
+  }
 
-score=0;
-lives=3;
-time=120;
-bulls=0;
-arrowsUsed=0;
+  updateScreen();
 
-for(let i=1;i<=12;i++){
-stack.push("Arrow "+i);
-}
+  clearInterval(timer);
 
-queue.enqueue("Bullseye");
-queue.enqueue("Middle");
-queue.enqueue("Outer");
+  timer = setInterval(function() {
 
-running=true;
-paused=false;
+    time--;
 
-startScreen.classList.add("hidden");
-endScreen.classList.add("hidden");
-gameScreen.classList.remove("hidden");
+    document.getElementById("time").textContent = time;
 
-pauseBtn.textContent="⏸ Pause";
+    if (time <= 0) {
+      endGame("⏰ TIME'S UP!");
+    }
 
-update();
-
-timer=setInterval(function(){
-
-if(!running || paused)return;
-
-time--;
-
-update();
-
-if(time<=0){
-endGame();
-}
-
-},1000);
+  }, 1000);
 
 }
 
 
-/* SHOOT */
+/* =========================
+   CREATE BUBBLES
+========================= */
 
-shootBtn.onclick=function(){
+function createBubbles() {
 
-if(!running || paused)return;
+  // Remove old bubbles
+  document.querySelectorAll(".bubble")
+    .forEach(b => b.remove());
 
-shootArrow();
+  bubbles = [];
 
-};
+  for (let row = 0; row < 5; row++) {
 
+    for (let col = 0; col < 7; col++) {
 
-/* SHOOT ARROW */
+      let bubble = document.createElement("div");
 
-function shootArrow(){
+      let color = randomColor();
 
-let arrow=stack.pop();
+      bubble.className = "bubble " + color;
 
-if(!arrow){
+      bubble.dataset.color = color;
 
-showMessage("NO ARROWS!");
+      bubble.style.left =
+        (20 + col * 58) + "px";
 
-return;
-}
+      bubble.style.top =
+        (15 + row * 48) + "px";
 
-arrowsUsed++;
+      board.appendChild(bubble);
 
-let target=targets[Math.floor(Math.random()*targets.length)];
-
-animateArrow(target,function(){
-
-let r=Math.random();
-
-let points;
-let type;
-
-if(r<0.35){
-
-points=100;
-type="Bullseye";
-bulls++;
-
-}else if(r<0.7){
-
-points=50;
-type="Middle";
-
-}else{
-
-points=20;
-type="Outer";
-
-}
-
-score+=points;
-
-hits.append(type);
-
-queue.dequeue();
-queue.enqueue(type);
-
-showMessage("+"+points+" "+type+"!");
-
-update();
-
-});
-
+      bubbles.push(bubble);
+    }
+  }
 }
 
 
-/* ARROW ANIMATION */
+/* =========================
+   SHOOT
+========================= */
 
-function animateArrow(target,callback){
+function shoot() {
 
-const arrow=document.createElement("div");
+  if (!playing) return;
 
-arrow.className="flyingArrow";
+  if (bubbleQueue.length === 0) {
+    enqueue(randomColor());
+  }
 
-gameScreen.appendChild(arrow);
+  // QUEUE: take first bubble
+  let color = dequeue();
 
-const archer=document.querySelector(".archer");
+  // STACK: store shot
+  pushShot(color);
 
-const a=archer.getBoundingClientRect();
-const t=target.getBoundingClientRect();
-const g=gameScreen.getBoundingClientRect();
+  // Add another upcoming bubble
+  enqueue(randomColor());
 
-const startX=a.left+a.width*.75-g.left;
-const startY=a.top+a.height*.35-g.top;
+  // Find bubbles of same color
+  let same = bubbles.filter(
+    b => b.dataset.color === color
+  );
 
-const endX=t.left+t.width/2-g.left;
-const endY=t.top+t.height/2-g.top;
+  if (same.length >= 3) {
 
-const dx=endX-startX;
-const dy=endY-startY;
+    let popped = same.slice(0, 3);
 
-const distance=Math.sqrt(dx*dx+dy*dy);
-const angle=Math.atan2(dy,dx)*180/Math.PI;
+    popped.forEach(b => {
 
-arrow.style.left=startX+"px";
-arrow.style.top=startY+"px";
-arrow.style.width="0px";
-arrow.style.transform="rotate("+angle+"deg)";
+      b.remove();
 
-setTimeout(function(){
+      bubbles = bubbles.filter(x => x !== b);
 
-arrow.style.transition="width .45s linear";
-arrow.style.width=distance+"px";
+      // LINKED LIST
+      addToLinkedList(color);
 
-},20);
+    });
 
-setTimeout(function(){
+    score += 30;
 
-arrow.remove();
-callback();
+    document.getElementById("message").textContent =
+      "💥 MATCH! 3 bubbles popped!";
 
-},500);
+  } else {
 
+    score += 5;
+
+    lives--;
+
+    document.getElementById("message").textContent =
+      "😅 No match!";
+
+    if (lives <= 0) {
+      endGame("💔 NO LIVES LEFT!");
+    }
+  }
+
+  updateScreen();
+
+  if (bubbles.length < 10 && playing) {
+    createBubbles();
+  }
 }
 
 
-/* TARGET CLICK */
+/* =========================
+   UNDO = STACK POP
+========================= */
 
-targets.forEach(function(target){
+function undoShot() {
 
-target.onclick=function(){
+  if (!playing) return;
 
-if(!running || paused)return;
+  if (shotStack.length === 0) {
 
-let arrow=stack.pop();
+    document.getElementById("message").textContent =
+      "Stack is empty!";
 
-if(!arrow){
+    return;
+  }
 
-showMessage("NO ARROWS!");
+  // STACK: remove latest shot
+  let removed = shotStack.pop();
 
-return;
+  score = Math.max(0, score - 5);
+
+  document.getElementById("message").textContent =
+    "↩️ Removed " + removed + " using STACK POP.";
+
+  updateScreen();
 }
 
-arrowsUsed++;
 
-let points=Number(target.dataset.points);
+/* =========================
+   UPDATE SCREEN
+========================= */
 
-let type;
+function updateScreen() {
 
-if(points===100){
-type="Bullseye";
-bulls++;
-}else if(points===50){
-type="Middle";
-}else{
-type="Outer";
+  document.getElementById("score").textContent = score;
+
+  document.getElementById("lives").textContent = lives;
+
+  document.getElementById("time").textContent = time;
+
+  // Stack
+  document.getElementById("stackView").textContent =
+    shotStack.length
+      ? shotStack.slice(-5).join(" → ")
+      : "Empty";
+
+  // Queue
+  document.getElementById("queueView").textContent =
+    bubbleQueue.slice(0,5).join(" → ");
+
+  // Linked List
+  let values = [];
+
+  let current = head;
+
+  while (current !== null) {
+
+    values.push(current.value);
+
+    current = current.next;
+  }
+
+  document.getElementById("listView").textContent =
+    values.length
+      ? values.join(" → ") + " → NULL"
+      : "NULL";
 }
 
-score+=points;
 
-hits.append(type);
+/* =========================
+   GAME OVER
+========================= */
 
-queue.dequeue();
-queue.enqueue(type);
+function endGame(text) {
 
-showMessage("+"+points+" "+type+"!");
+  playing = false;
 
-update();
+  clearInterval(timer);
 
-};
-
-});
-
-
-/* PAUSE */
-
-pauseBtn.onclick=function(){
-
-if(!running)return;
-
-paused=!paused;
-
-pauseBtn.textContent=paused?"▶ Resume":"⏸ Pause";
-
-showMessage(paused?"PAUSED":"RESUMED");
-
-};
-
-
-/* UPDATE */
-
-function update(){
-
-document.getElementById("lives").textContent=lives;
-document.getElementById("time").textContent=time;
-document.getElementById("score").textContent=score;
-document.getElementById("bullseyes").textContent=bulls;
-
-document.getElementById("stackStatus").textContent=
-stack.size()+" arrows";
-
-document.getElementById("queueStatus").textContent=
-queue.size()+" targets";
-
-let values=hits.values();
-
-document.getElementById("listStatus").textContent=
-values.length ? values.slice(-3).join(" → ") : "Empty";
-
-updateArrows();
+  document.getElementById("message").textContent =
+    text + " Final Score: " + score;
 
 }
 
 
-/* VISIBLE ARROWS */
+/* =========================
+   RESTART
+========================= */
 
-function updateArrows(){
+function restartGame() {
 
-const visual=document.getElementById("arrowVisual");
+  clearInterval(timer);
 
-let count=stack.size();
+  document.getElementById("startScreen")
+    .classList.remove("hidden");
 
-visual.innerHTML="";
+  document.getElementById("message").textContent =
+    "Press START GAME!";
 
-for(let i=0;i<Math.min(count,8);i++){
-
-let a=document.createElement("span");
-
-a.style.position="absolute";
-a.style.width="3px";
-a.style.height="75px";
-a.style.background="#eee";
-a.style.left=(3+i*4)+"px";
-a.style.bottom="45px";
-a.style.transform="rotate("+(-8+i*2)+"deg)";
-
-visual.appendChild(a);
-
-}
+  document.getElementById("time").textContent = 60;
 
 }
 
 
-/* MESSAGE */
+/* =========================
+   RANDOM COLOR
+========================= */
 
-function showMessage(text){
+function randomColor() {
 
-message.textContent=text;
-message.style.opacity="1";
-
-setTimeout(function(){
-message.style.opacity="0";
-},900);
-
-}
-
-
-/* END */
-
-function endGame(){
-
-running=false;
-
-clearInterval(timer);
-
-document.getElementById("finalScore").textContent=score;
-document.getElementById("finalBull").textContent=bulls;
-document.getElementById("finalArrows").textContent=arrowsUsed;
-document.getElementById("finalTime").textContent=time;
-
-gameScreen.classList.add("hidden");
-endScreen.classList.remove("hidden");
+  return colors[
+    Math.floor(Math.random() * colors.length)
+  ];
 
 }
 
